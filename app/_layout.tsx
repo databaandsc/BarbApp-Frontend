@@ -2,9 +2,10 @@ import { Stack } from 'expo-router';
 
 export default function RootLayout() {
   return (
-    <Stack>
-      {/* Declaramos que existe un grupo de pantallas de Auth sin cabecera global */}
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+    <Stack screenOptions={{ headerShown: false }}>
+      {/* The (auth) group now handles its own internal layout */}
+      <Stack.Screen name="(auth)" />
+      <Stack.Screen name="index" />
     </Stack>
   );
 }
