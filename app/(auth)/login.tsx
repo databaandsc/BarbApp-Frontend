@@ -1,10 +1,12 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { supabase } from '../../src/config/supabase';
 import { AppButton } from '../../components/AppButton';
 import { AppInput } from '../../components/AppInput';
 import { Colors } from '../../constants/theme';
+import { supabase } from '../../src/config/supabase';
+
+// IMPORTA nuestro nuevo api de src/api/api.ts primero arriba del todo del archivo
 
 /**
  * Login Screen
@@ -36,7 +38,7 @@ export default function LoginScreen() {
       setErrorMessage('Por favor, introduce tu correo y contraseña.');
       return;
     }
-    
+
     setLoading(true);
     setErrorMessage('');
 
