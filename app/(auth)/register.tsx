@@ -1,211 +1,202 @@
-import React, { useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
-import { supabase } from '../../src/config/supabase';
-// Import the router to handle navigation between screens
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { supabase } from '../../src/config/supabase';
+import { AppButton } from '../../components/AppButton';
+import { AppInput } from '../../components/AppInput';
+import { Colors } from '../../constants/theme';
+
+/**
+ * Registration Screen
+ * 
+ * Manages the creation of new user accounts.
+ * Integrates directly with Supabase Auth `signUp` method.
+ * 
+ * Tech Specs:
+ * - Multi-field validation (Client-side).
+ * - Metadata synchronization: Custom user data (first name, phone) is passed to Supabase
+ *   metadata, which then triggers a SQL function for DB persistence.
+ * - UX focused: Automatic scroll to accommodate many inputs on smaller devices.
+ */
 
 export default function RegisterScreen() {
   const router = useRouter();
 
-  // Input states
+  // Form Field State
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
-
   
-  // UI states
+  // UI Logic State
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  /**
+   * Primary Action: Sign Up
+   * Performs validation and executes the registration request.
+   */
   const handleRegister = async () => {
-    // 1. Basic input validation
-    if (!email || !password || !firstName || !lastName) {
+    // Comprehensive field validation required by backend business logic
+    if (!email || !password || !confirmPassword || !firstName || !lastName || !phone) {
       setErrorMessage('Por favor, rellena todos los campos obligatorios.');
       return;
     }
 
-    // 1.2 Check if passwords match
     if (password !== confirmPassword) {
-        setErrorMessage('Las contraseñas no coinciden.');
-        return;
-      }
+      setErrorMessage('Las contraseñas no coinciden.');
+      return;
+    }
 
     setLoading(true);
     setErrorMessage('');
     setSuccessMessage('');
 
     try {
-      // 2. Register user via Supabase Auth
+      // Supabase Auth SignUp including custom user metadata
       const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            phone: phone,
-          }
+        email,
+        password,
+        options: { 
+          data: { 
+            first_name: firstName, 
+            last_name: lastName, 
+            phone 
+          } 
         }
       });
 
-      // 3. Handle registration response
       if (error) {
         setErrorMessage(error.message);
       } else {
-        setSuccessMessage('Registro realizado con éxito. Revisa tu correo electrónico.');
-        console.log('User registered successfully:', data.user?.id);
-        // Future step: Redirect user to Login or Main App
+        setSuccessMessage('Registro realizado con éxito. Revisa tu correo.');
       }
 
     } catch (err) {
-      setErrorMessage('Un error de red inesperado ha ocurrido.');
+      setErrorMessage('Ha ocurrido un error inesperado de red.');
     } finally {
-      // Ensure the loading state is reset regardless of the outcome
       setLoading(false);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* App Header */}
-      <Text style={styles.title}>Únete a BarbApp</Text>
-      <Text style={styles.subtitle}>Crea tu nueva cuenta</Text>
-
-      {/* Mandatory Fields */}
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre *"
-        value={firstName}
-        onChangeText={setFirstName}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Apellidos *"
-        value={lastName}
-        onChangeText={setLastName}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico *"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña *"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Repetir contraseña *"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-       />
-
-      {/* Optional Field */}
-      <TextInput
-        style={styles.input}
-        placeholder="Teléfono (Opcional)"
-        value={phone}
-        onChangeText={setPhone}
-        keyboardType="phone-pad"
-      />
-
-      {/* Messages */}
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-      {successMessage ? <Text style={styles.successText}>{successMessage}</Text> : null}
-
-      {/* Submit Button */}
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={handleRegister}
-        disabled={loading}
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+      style={styles.root}
+    >
+      <ScrollView 
+        style={styles.scroll} 
+        contentContainerStyle={styles.container} 
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
-        {loading ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text style={styles.buttonText}>Registrarse</Text>
-        )}
-      </TouchableOpacity>
+        {/* Header Section */}
+        <Text style={styles.title}>Únete</Text>
+        <Text style={styles.subtitle}>Crea tu cuenta premium en BarbApp</Text>
 
-      {/* Navigation link back to Login */}
-      <TouchableOpacity 
-        style={{ marginTop: 20, alignItems: 'center' }} 
-        onPress={() => router.back()}
-      >
-        <Text style={{ color: '#666', fontSize: 16 }}>
-          ¿Ya tienes cuenta? <Text style={{ color: '#000', fontWeight: 'bold' }}>Inicia sesión</Text>
-        </Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {/* Input Fields */}
+        <AppInput placeholder="Nombre *" value={firstName} onChangeText={setFirstName} />
+        <AppInput placeholder="Apellidos *" value={lastName} onChangeText={setLastName} />
+        <AppInput 
+          placeholder="Correo electrónico *" 
+          value={email} 
+          onChangeText={setEmail} 
+          keyboardType="email-address" 
+          autoCapitalize="none"
+        />
+        <AppInput 
+          placeholder="Contraseña *" 
+          value={password} 
+          onChangeText={setPassword} 
+          secureTextEntry 
+        />
+        <AppInput 
+          placeholder="Repetir contraseña *" 
+          value={confirmPassword} 
+          onChangeText={setConfirmPassword} 
+          secureTextEntry 
+        />
+        <AppInput 
+          placeholder="Teléfono *" 
+          value={phone} 
+          onChangeText={setPhone} 
+          keyboardType="phone-pad" 
+        />
+
+        {/* Dynamic Messaging */}
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+        {successMessage ? <Text style={styles.successText}>{successMessage}</Text> : null}
+
+        <AppButton text="Registrarse" onPress={handleRegister} loading={loading} />
+
+        {/* Secondary Action: Navigation back to Login (Replacement prevents stack bloating) */}
+        <TouchableOpacity 
+          style={styles.link} 
+          onPress={() => router.replace('/(auth)/login')}
+          activeOpacity={0.6}
+        >
+          <Text style={styles.linkText}>
+            ¿Ya tienes cuenta? <Text style={styles.linkHighlight}>Inicia sesión</Text>
+          </Text>
+        </TouchableOpacity>
+
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
-// ==========================================
-// --- STYLES (React Native CSS) ---
-// ==========================================
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#F5F5F5',
+  root: { 
+    flex: 1, 
+    backgroundColor: Colors.background 
   },
-  title: {
-    fontSize: 42,
-    fontWeight: 'bold',
+  scroll: { 
+    flex: 1 
+  },
+  container: { 
+    padding: 25, 
+    paddingTop: 60, 
+    backgroundColor: Colors.background 
+  },
+  title: { 
+    fontSize: 42, 
+    fontWeight: '800', 
+    color: Colors.primary, 
+    marginBottom: 5, 
+    textAlign: 'center' 
+  },
+  subtitle: { 
+    fontSize: 16, 
+    color: Colors.textMuted, 
+    marginBottom: 30, 
+    textAlign: 'center' 
+  },
+  link: { 
+    marginTop: 25, 
+    marginBottom: 40, 
+    alignItems: 'center' 
+  },
+  linkText: { 
+    color: Colors.textMuted, 
+    fontSize: 16 
+  },
+  linkHighlight: { 
+    color: Colors.primary, 
+    fontWeight: '700' 
+  },
+  errorText: { 
+    color: Colors.error, 
+    marginBottom: 15, 
     textAlign: 'center',
-    marginBottom: 5,
-    color: '#000',
+    fontSize: 14 
   },
-  subtitle: {
-    fontSize: 16,
+  successText: { 
+    color: Colors.success, 
+    marginBottom: 15, 
     textAlign: 'center',
-    marginBottom: 30,
-    color: '#666',
-  },
-  input: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#000',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  successText: {
-    color: 'green',
-    marginBottom: 10,
-    textAlign: 'center',
+    fontSize: 14 
   }
 });

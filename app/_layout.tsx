@@ -1,11 +1,20 @@
 import { Stack } from 'expo-router';
 
+/**
+ * Root Application Layout
+ * 
+ * This is the top-level layout that wraps every screen in the application.
+ * It uses a Stack navigator from 'expo-router' but disables headers for a more
+ * custom UI feel. Any global providers (State Management, Toast, etc.) should 
+ * be injected at this level.
+ */
+
 export default function RootLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {/* The (auth) group now handles its own internal layout */}
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="index" />
+      {/* Route Groups: Organized by functional scope */}
+      <Stack.Screen name="(auth)" options={{ title: 'Authentication' }} />
+      <Stack.Screen name="index" options={{ title: 'Entry' }} />
     </Stack>
   );
 }

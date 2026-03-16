@@ -1,154 +1,150 @@
-import React, { useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { supabase } from '../../src/config/supabase';
-// Import the router to handle navigation between screens
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { supabase } from '../../src/config/supabase';
+import { AppButton } from '../../components/AppButton';
+import { AppInput } from '../../components/AppInput';
+import { Colors } from '../../constants/theme';
+
+/**
+ * Login Screen
+ * 
+ * Functional component responsible for user authentication.
+ * Implements a controlled form for email and password input.
+ * Features:
+ * - Direct integration with Supabase Auth API.
+ * - Error handling for network and authentication failures.
+ * - UX optimization through KeyboardAvoidingView to prevent layout occlusion.
+ */
 
 export default function LoginScreen() {
   const router = useRouter();
-
-  // Input states
+  
+  // Local state management for form inputs and UI feedback
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  // UI states
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  /**
+   * Primary Action: Sign In
+   * Triggers the auth request to Supabase and manages loading/error states.
+   */
   const handleLogin = async () => {
-    // 1. Basic input validation
+    // Basic defensive check before API call
     if (!email || !password) {
       setErrorMessage('Por favor, introduce tu correo y contraseña.');
       return;
     }
-
+    
     setLoading(true);
     setErrorMessage('');
 
     try {
-      // 2. Authenticate user via Supabase
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
-
-      // 3. Handle authentication response
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      
       if (error) {
         setErrorMessage(error.message);
       } else {
-        console.log('Successfully authenticated via Supabase!');
-        // Future step: Redirect user to the main application dashboard
+        // Successful authentication flows should be handled by an Auth Provider listener
+        console.log('Login successful!');
       }
-
     } catch (err) {
-      setErrorMessage('Ha ocurrido un error de red inesperado.');
+      setErrorMessage('Error de red inesperado.');
     } finally {
-      // Ensure the loading state is reset regardless of the outcome
       setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      {/* App Header */}
-      <Text style={styles.title}>BarbApp</Text>
-      <Text style={styles.subtitle}>Reserva en tu barbería favorita</Text>
-
-      {/* Email Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-
-      {/* Password Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      {/* Error Message Display */}
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-
-      {/* Submit Button */}
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={handleLogin}
-        disabled={loading}
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.root}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.container} 
+        bounces={false}
+        keyboardShouldPersistTaps="handled" 
       >
-        {loading ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text style={styles.buttonText}>Entrar</Text>
-        )}
-      </TouchableOpacity>
+        {/* Branding Section */}
+        <Text style={styles.title}>BarbApp</Text>
+        <Text style={styles.subtitle}>Reserva en tu barbería favorita</Text>
 
-      {/* Navigation link to Register */}
-      <TouchableOpacity 
-        style={{ marginTop: 20, alignItems: 'center' }} 
-        onPress={() => router.push('/(auth)/register')}
-      >
-        <Text style={{ color: '#666', fontSize: 16 }}>
-          ¿No tienes una cuenta? <Text style={{ color: '#000', fontWeight: 'bold' }}>Regístrate</Text>
-        </Text>
-      </TouchableOpacity>
-    </View>
+        {/* Input Fields: Leverages atomic UI components */}
+        <AppInput 
+          placeholder="Correo electrónico"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <AppInput 
+          placeholder="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        {/* Dynamic UI Feedback */}
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
+        <AppButton text="Entrar" onPress={handleLogin} loading={loading} />
+
+        {/* Navigation: Navigates within the (auth) stack */}
+        <TouchableOpacity 
+          style={styles.link} 
+          onPress={() => router.push('/(auth)/register')}
+          activeOpacity={0.6}
+        >
+          <Text style={styles.linkText}>
+            ¿No tienes cuenta? <Text style={styles.linkHighlight}>Regístrate</Text>
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
-// ==========================================
-// --- STYLES (React Native CSS) ---
-// ==========================================
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#F5F5F5',
+  root: { 
+    flex: 1, 
+    backgroundColor: Colors.background 
   },
-  title: {
-    fontSize: 42,
-    fontWeight: 'bold',
+  container: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    padding: 25 
+  },
+  title: { 
+    fontSize: 48, 
+    fontWeight: '800', 
+    textAlign: 'center', 
+    color: Colors.primary, 
+    marginBottom: 5 
+  },
+  subtitle: { 
+    fontSize: 16, 
+    textAlign: 'center', 
+    color: Colors.textMuted, 
+    marginBottom: 40 
+  },
+  link: { 
+    marginTop: 25, 
+    alignItems: 'center' 
+  },
+  linkText: { 
+    color: Colors.textMuted, 
+    fontSize: 16 
+  },
+  linkHighlight: { 
+    color: Colors.primary, 
+    fontWeight: '700' 
+  },
+  errorText: { 
+    color: Colors.error, 
+    marginBottom: 15, 
     textAlign: 'center',
-    marginBottom: 5,
-    color: '#000',
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 40,
-    color: '#666',
-  },
-  input: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#000',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-    textAlign: 'center',
+    fontSize: 14 
   }
 });
