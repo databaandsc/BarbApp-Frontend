@@ -10,9 +10,11 @@ export default function RegisterScreen() {
   // Input states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
+
   
   // UI states
   const [loading, setLoading] = useState(false);
@@ -25,6 +27,12 @@ export default function RegisterScreen() {
       setErrorMessage('Por favor, rellena todos los campos obligatorios.');
       return;
     }
+
+    // 1.2 Check if passwords match
+    if (password !== confirmPassword) {
+        setErrorMessage('Las contraseñas no coinciden.');
+        return;
+      }
 
     setLoading(true);
     setErrorMessage('');
@@ -98,6 +106,14 @@ export default function RegisterScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Repetir contraseña *"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+       />
 
       {/* Optional Field */}
       <TextInput
