@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../../src/config/supabase';
+// Import the router to handle navigation between screens
+import { useRouter } from 'expo-router';
 
 export default function LoginScreen() {
+  const router = useRouter();
+
+  // Input states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // UI states
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = async () => {
     // 1. Basic input validation
     if (!email || !password) {
-      setErrorMessage('Please enter both email and password.');
+      setErrorMessage('Por favor, introduce tu correo y contraseña.');
       return;
     }
 
@@ -34,7 +41,7 @@ export default function LoginScreen() {
       }
 
     } catch (err) {
-      setErrorMessage('An unexpected network error occurred.');
+      setErrorMessage('Ha ocurrido un error de red inesperado.');
     } finally {
       // Ensure the loading state is reset regardless of the outcome
       setLoading(false);
@@ -45,12 +52,12 @@ export default function LoginScreen() {
     <View style={styles.container}>
       {/* App Header */}
       <Text style={styles.title}>BarbApp</Text>
-      <Text style={styles.subtitle}>Book your favorite barber</Text>
+      <Text style={styles.subtitle}>Reserva en tu barbería favorita</Text>
 
       {/* Email Input */}
       <TextInput
         style={styles.input}
-        placeholder="Email address"
+        placeholder="Correo electrónico"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -60,7 +67,7 @@ export default function LoginScreen() {
       {/* Password Input */}
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder="Contraseña"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -78,8 +85,18 @@ export default function LoginScreen() {
         {loading ? (
           <ActivityIndicator color="white" />
         ) : (
-          <Text style={styles.buttonText}>Sign In</Text>
+          <Text style={styles.buttonText}>Entrar</Text>
         )}
+      </TouchableOpacity>
+
+      {/* Navigation link to Register */}
+      <TouchableOpacity 
+        style={{ marginTop: 20, alignItems: 'center' }} 
+        onPress={() => router.push('/(auth)/register')}
+      >
+        <Text style={{ color: '#666', fontSize: 16 }}>
+          ¿No tienes una cuenta? <Text style={{ color: '#000', fontWeight: 'bold' }}>Regístrate</Text>
+        </Text>
       </TouchableOpacity>
     </View>
   );
