@@ -1,24 +1,20 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+/**
+ * Root Application Layout
+ * 
+ * This is the top-level layout that wraps every screen in the application.
+ * It uses a Stack navigator from 'expo-router' but disables headers for a more
+ * custom UI feel. Any global providers (State Management, Toast, etc.) should 
+ * be injected at this level.
+ */
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      {/* Route Groups: Organized by functional scope */}
+      <Stack.Screen name="(auth)" options={{ title: 'Authentication' }} />
+      <Stack.Screen name="index" options={{ title: 'Entry' }} />
+    </Stack>
   );
 }
