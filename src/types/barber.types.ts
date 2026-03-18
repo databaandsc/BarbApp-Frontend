@@ -5,7 +5,8 @@ export interface PublicBarber {
     id: string;
     name: string;
     surname: string;
-    // No phone ir order to conserve the privacy
+    phone?: string;
+    
   }
   
   // 2. Private model
