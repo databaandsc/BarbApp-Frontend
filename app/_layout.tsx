@@ -12,7 +12,7 @@ import { Stack } from 'expo-router';
 export default function RootLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {/* Route Groups: Organized by functional scope */}
+      <Stack.Screen name="(tabs)" options={{ title: 'App' }} />
       <Stack.Screen name="(auth)" options={{ title: 'Authentication' }} />
       <Stack.Screen name="index" options={{ title: 'Entry' }} />
     </Stack>
