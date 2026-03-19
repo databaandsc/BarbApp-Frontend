@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../constants/theme';
@@ -53,10 +54,17 @@ export default function CatalogScreen() {
         <Text style={styles.specialtyText}>Senior Barber</Text>
       </View>
 
-      {/* Primary Call-To-Action (CTA) */}
-      <TouchableOpacity style={styles.actionButton}>
+    {/* Primary Call-To-Action (CTA) */}
+    <TouchableOpacity 
+        style={styles.actionButton}
+        onPress={() => router.push({
+        pathname: `/barber/${item.id}` as any,
+        params: { name: item.name, surname: item.surname }
+        })}
+        >
         <Text style={styles.actionButtonText}>Book</Text>
       </TouchableOpacity>
+
     </View>
   );
 
