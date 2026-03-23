@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { Colors } from '../../constants/theme';
+import { ShopService } from '../../src/services/shop.service';
 
 export default function BookingCalendarScreen() {
-  const { barberName, serviceName, serviceDuration, servicePrice } = useLocalSearchParams<{
+  const { barberId, barberName, serviceId, serviceName, serviceDuration, servicePrice } = useLocalSearchParams<{
     barberId: string;
     barberName: string;
     serviceId: string;
@@ -15,23 +16,47 @@ export default function BookingCalendarScreen() {
     servicePrice: string;
   }>();
 
-  // Estados para manejar el día y la hora que elige el usuario
+  // Selected date and time state management
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-
-  // Simulación temporal de horas libres (Mocking)
-  const availableSlots = ['09:00', '10:30', '11:00', '16:00', '17:30', '18:00'];
+  
+  // Dynamic slots state management
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
 
   /**
-   * Action when the user confirms the booking.
+   * Invoked when the user selects a specific day on the calendar.
+   * Clears previous state and fetches dynamic availability from the Spring Boot API.
+   * 
+   * @param day - The raw day object provided by react-native-calendars.
+   */
+  const handleDayPress = async (day: DateData) => {
+    setSelectedDate(day.dateString);
+    setSelectedTime(''); 
+    setAvailableSlots([]); 
+
+    setLoadingSlots(true);
+
+    try {
+      // Fetch computed availability from the backend engine
+      const slots = await ShopService.getAvailableSlots(barberId, day.dateString);
+      setAvailableSlots(slots);
+    } catch (error) {
+      Alert.alert('Error', 'No se pudieron cargar las horas disponibles para la fecha seleccionada.');
+    } finally {
+      setLoadingSlots(false);
+    }
+  };
+
+  /**
+   * Action triggered when the user initiates the booking confirmation.
    */
   const handleConfirmReservation = () => {
     if (!selectedDate || !selectedTime) return;
     
-    // Aquí comprobaremos luego si está logueado o lanzaremos la API real
     Alert.alert(
-      "Booking Confirmed",
-      `Your appointment for ${serviceName} with ${barberName} on ${selectedDate} at ${selectedTime} has been registered!`
+      "Reserva Solicitada",
+      `Tu cita de ${serviceName} con ${barberName} el día ${selectedDate} a las ${selectedTime} ha sido enviada. Está pendiente de confirmación.`
     );
   };
 
@@ -42,29 +67,25 @@ export default function BookingCalendarScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={Colors.text} />
         </TouchableOpacity>
-        <Text style={styles.title}>Select Date</Text>
+        <Text style={styles.title}>Selecciona Fecha</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Booking Summary Section */}
         <View style={styles.summaryCard}>
-          <Text style={styles.summaryTitle}>Booking Summary</Text>
-          <Text style={styles.summaryText}>{serviceName} (with {barberName})</Text>
+          <Text style={styles.summaryTitle}>Resumen de Reserva</Text>
+          <Text style={styles.summaryText}>{serviceName} (con {barberName})</Text>
           <Text style={styles.summaryText}>{serviceDuration} min • {servicePrice} €</Text>
         </View>
 
         {/* The Interactive Calendar Component */}
-        <Text style={styles.sectionTitle}>1. Choose a Day</Text>
+        <Text style={styles.sectionTitle}>1. Escoge un Día</Text>
         <Calendar
-          // Formato estándar YYYY-MM-DD
-          onDayPress={(day: DateData) => {
-            setSelectedDate(day.dateString);
-            setSelectedTime(''); // Reseteamos la hora si cambia de día
-          }}
+          // Standard YYYY-MM-DD format handling
+          onDayPress={handleDayPress}
           markedDates={{
             [selectedDate]: { selected: true, selectedColor: Colors.primary }
           }}
-          // Theme Premium Dark
           theme={{
             backgroundColor: Colors.background,
             calendarBackground: Colors.surface,
@@ -83,26 +104,33 @@ export default function BookingCalendarScreen() {
           style={styles.calendarContainer}
         />
 
-        {/* Time Slot Selection Grid (Only visible if a day is selected) */}
+        {/* Dynamic Time Slot Selection Grid */}
         {selectedDate ? (
           <View style={styles.slotsSection}>
-            <Text style={styles.sectionTitle}>2. Choose a Time</Text>
-            <View style={styles.slotsGrid}>
-              {availableSlots.map((time) => {
-                const isSelected = time === selectedTime;
-                return (
-                  <TouchableOpacity
-                    key={time}
-                    onPress={() => setSelectedTime(time)}
-                    style={[styles.slotChip, isSelected && styles.slotChipSelected]}
-                  >
-                    <Text style={[styles.slotText, isSelected && styles.slotTextSelected]}>
-                      {time}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+            <Text style={styles.sectionTitle}>2. Escoge una Hora</Text>
+            
+            {loadingSlots ? (
+              <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 20 }} />
+            ) : availableSlots.length === 0 ? (
+              <Text style={styles.emptySlotsText}>El profesional no tiene horas libres este día.</Text>
+            ) : (
+              <View style={styles.slotsGrid}>
+                {availableSlots.map((time) => {
+                  const isSelected = time === selectedTime;
+                  return (
+                    <TouchableOpacity
+                      key={time}
+                      onPress={() => setSelectedTime(time)}
+                      style={[styles.slotChip, isSelected && styles.slotChipSelected]}
+                    >
+                      <Text style={[styles.slotText, isSelected && styles.slotTextSelected]}>
+                        {time}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
           </View>
         ) : null}
       </ScrollView>
@@ -111,7 +139,7 @@ export default function BookingCalendarScreen() {
       {selectedDate && selectedTime ? (
         <View style={styles.bottomFooter}>
           <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmReservation}>
-            <Text style={styles.confirmButtonText}>Confirm Appointment</Text>
+            <Text style={styles.confirmButtonText}>Confirmar Cita</Text>
           </TouchableOpacity>
         </View>
       ) : null}
@@ -142,6 +170,8 @@ const styles = StyleSheet.create({
   slotChipSelected: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   slotText: { color: Colors.text, fontSize: 16, fontWeight: '500' },
   slotTextSelected: { color: Colors.background, fontWeight: 'bold' },
+  
+  emptySlotsText: { color: Colors.textMuted, marginLeft: 20, fontStyle: 'italic' },
   
   bottomFooter: { 
     position: 'absolute', bottom: 0, left: 0, right: 0, 
