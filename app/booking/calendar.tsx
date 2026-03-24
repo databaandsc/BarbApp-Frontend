@@ -1,3 +1,4 @@
+import { supabase } from '@/src/config/supabase';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
@@ -48,17 +49,34 @@ export default function BookingCalendarScreen() {
     }
   };
 
-  /**
+    /**
    * Action triggered when the user initiates the booking confirmation.
+   * Enforces Authentication Check before proceeding.
    */
-  const handleConfirmReservation = () => {
-    if (!selectedDate || !selectedTime) return;
+    const handleConfirmReservation = async () => {
+        if (!selectedDate || !selectedTime) return;
+        
+        // 1. Check current Authentication State from Supabase Local Storage
+        const { data: { session } } = await supabase.auth.getSession();
     
-    Alert.alert(
-      "Reserva Solicitada",
-      `Tu cita de ${serviceName} con ${barberName} el día ${selectedDate} a las ${selectedTime} ha sido enviada. Está pendiente de confirmación.`
-    );
-  };
+        if (!session) {
+          // Si no hay sesión, frenamos la reserva y lo mandamos a loguearse
+          Alert.alert(
+            "Autenticación Requerida",
+            "Por favor, inicia sesión o regístrate para solicitar la cita."
+          );
+          // Redirigimos a tu pantalla de login (Ajusta la ruta si la tuya se llama distinto, ej: /(auth) o /login)
+          router.push('/login' as any); 
+          return; 
+        }
+    
+        // 2. Si hay sesión, por ahora seguimos simulando el éxito (Próximo paso: conectar al Backend real)
+        Alert.alert(
+          "Reserva Solicitada",
+          `Tu cita de ${serviceName} con ${barberName} el día ${selectedDate} a las ${selectedTime} ha sido enviada al profesional y está pendiente.`
+        );
+      };
+    
 
   return (
     <View style={styles.container}>
