@@ -5,7 +5,9 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { Colors } from '../../constants/theme';
+import { BookingService } from '../../src/services/booking.services';
 import { ShopService } from '../../src/services/shop.service';
+
 
 export default function BookingCalendarScreen() {
   const { barberId, barberName, serviceId, serviceName, serviceDuration, servicePrice } = useLocalSearchParams<{
@@ -49,33 +51,48 @@ export default function BookingCalendarScreen() {
     }
   };
 
-    /**
-   * Action triggered when the user initiates the booking confirmation.
-   * Enforces Authentication Check before proceeding.
+/**
+   * Validates user authentication and initiates the booking creation flow.
+   * Parses local dates into UTC ISO-8601 strictly required by the backend.
    */
-    const handleConfirmReservation = async () => {
-        if (!selectedDate || !selectedTime) return;
-        
-        // 1. Check current Authentication State from Supabase Local Storage
-        const { data: { session } } = await supabase.auth.getSession();
+const handleConfirmReservation = async () => {
+    if (!selectedDate || !selectedTime) return;
     
-        if (!session) {
-          // Si no hay sesión, frenamos la reserva y lo mandamos a loguearse
-          Alert.alert(
-            "Autenticación Requerida",
-            "Por favor, inicia sesión o regístrate para solicitar la cita."
-          );
-          // Redirigimos a tu pantalla de login (Ajusta la ruta si la tuya se llama distinto, ej: /(auth) o /login)
-          router.push('/login' as any); 
-          return; 
-        }
+    // 1. Enforce authentication barrier
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      Alert.alert(
+        "Autenticación Requerida",
+        "Por favor, inicia sesión o regístrate para solicitar la cita."
+      );
+      router.push('/login' as any); 
+      return; 
+    }
     
-        // 2. Si hay sesión, por ahora seguimos simulando el éxito (Próximo paso: conectar al Backend real)
-        Alert.alert(
-          "Reserva Solicitada",
-          `Tu cita de ${serviceName} con ${barberName} el día ${selectedDate} a las ${selectedTime} ha sido enviada al profesional y está pendiente.`
-        );
-      };
+    // 2. Parse selected dates into Backend-compatible ISO-8601 format
+    const startAt = `${selectedDate}T${selectedTime}:00Z`;
+    const startDateObj = new Date(startAt);
+    startDateObj.setMinutes(startDateObj.getMinutes() + parseInt(serviceDuration, 10));
+    const endAt = startDateObj.toISOString();
+
+    // 3. Dispatch data payload to the API
+    try {
+      await BookingService.createAppointment({
+        barberId: barberId,
+        startAt: startAt,
+        endAt: endAt,
+        serviceIds: [serviceId],
+        clientNotes: "Reserva gestionada automáticamente desde BarbApp",
+      });
+      Alert.alert(
+        "Reserva Solicitada con Éxito",
+        `Tu cita de ${serviceName} con ${barberName} a las ${selectedTime} ha sido enviada al profesional y consta como PENDIENTE de confirmación.`
+      );
+      router.push('/(tabs)/catalog' as any);
+    } catch (error) {
+      Alert.alert("Servidor no disponible", "No se ha podido procesar la reserva con el servidor. Por favor, inténtelo en unos minutos.");
+    }
+  };
     
 
   return (
