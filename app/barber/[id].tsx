@@ -51,7 +51,20 @@ export default function BarberDetailScreen() {
       
       <View style={styles.serviceAction}>
         <Text style={styles.servicePrice}>{item.price} €</Text>
-        <TouchableOpacity style={styles.selectButton}>
+        <TouchableOpacity 
+          style={styles.selectButton}
+          onPress={() => router.push({
+            pathname: '/booking/calendar' as any,
+            params: { 
+              barberId: id, 
+              barberName: `${name} ${surname}`,
+              serviceId: item.id,
+              serviceName: item.name,
+              serviceDuration: item.durationMinutes,
+              servicePrice: item.price
+            }
+          })}
+        >
           <Text style={styles.selectButtonText}>Select</Text>
         </TouchableOpacity>
       </View>

@@ -1,3 +1,4 @@
+import { useAuth } from '@/src/providers/AuthProvider';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
@@ -21,6 +22,16 @@ import { supabase } from '../../src/config/supabase';
 
 export default function LoginScreen() {
   const router = useRouter();
+
+  const { session } = useAuth();
+
+  // When the screen detects that a session has magically started
+  // it will redirect the user directly to the catalog.
+  React.useEffect(() => {
+    if (session) {
+      router.replace('/(tabs)/catalog');
+    }
+  }, [session]);
   
   // Local state management for form inputs and UI feedback
   const [email, setEmail] = useState('');
