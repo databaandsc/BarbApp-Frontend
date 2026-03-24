@@ -1,6 +1,7 @@
 import { supabase } from '@/src/config/supabase';
 import { useAuth } from '@/src/providers/AuthProvider';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { AppButton } from '../../components/AppButton';
@@ -12,6 +13,7 @@ import { Colors } from '../../constants/theme';
  */
 export default function ProfileScreen() {
   const { session } = useAuth();
+  const router = useRouter();
   
   // Extract the logged-in user's email to display it on screen
   const userEmail = session?.user?.email || 'User';
@@ -21,13 +23,17 @@ export default function ProfileScreen() {
       const { error } = await supabase.auth.signOut();
       if (error) {
         Alert.alert('Error', 'Unable to log out.');
+        return; // Si da error, cortamos aquí
       }
-      // Upon successful Supabase signOut, our custom AuthProvider will automatically
-      // clear the session token and redirect the user back to the Login screen.
+      
+      // ¡La magia! Forzamos la redirección a la pantalla de entrada
+      router.replace('/(auth)/login');
+      
     } catch (err) {
       console.error(err);
     }
   };
+  
 
   return (
     <View style={styles.container}>
