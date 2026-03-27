@@ -2,47 +2,84 @@ import { Session } from '@supabase/supabase-js';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../config/supabase';
 
-// 1. Define the shape of the data that will be shared across the app
+/**
+ * Supported User Roles in the application.
+ */
+type UserRole = 'ADMIN' | 'BARBER' | 'CLIENT' | null;
+
+/**
+ * Auth Context State definition.
+ */
 type AuthContextType = {
   session: Session | null;
+  role: UserRole;
+  isProfessional: boolean;
   loading: boolean;
 };
 
-// 2. Create the context with default empty values
+// Create context with default values
 const AuthContext = createContext<AuthContextType>({
   session: null,
+  role: null,
+  isProfessional: false,
   loading: true,
 });
 
-// 3. Provider component that will wrap our application
+/**
+ * Authentication Provider.
+ * Manages the global session and user roles extracted from Supabase metadata.
+ */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
+  const [role, setRole] = useState<UserRole>(null);
+  const [isProfessional, setIsProfessional] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // On app load, check if there's already an active session stored
+    /**
+     * Logic to identify the user's role and professional status.
+     * Professionals include both ADMIN and BARBER roles.
+     */
+    const extractRoleInfo = (session: Session | null) => {
+      
+      console.log('== FULL USER METADATA ==', JSON.stringify(session?.user?.user_metadata));
+      // -------------------------------------------
+      
+      const userRole = (session?.user?.user_metadata?.role as UserRole) || (session ? 'CLIENT' : null);
+      const professional = userRole === 'ADMIN' || userRole === 'BARBER';
+      
+      console.log('== EXTRACTED ROLE:', userRole, '| IS PROFESSIONAL:', professional, ' ==');
+      
+      return { userRole, professional };
+    };
+
+    // Initial session check on application load
     supabase.auth.getSession().then(({ data: { session } }) => {
+      const { userRole, professional } = extractRoleInfo(session);
       setSession(session);
+      setRole(userRole);
+      setIsProfessional(professional);
       setLoading(false);
     });
 
-    // Subscribe to authentication state changes (e.g., login, logout)
+    // Listen to real-time auth state changes (SignIn, SignOut, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
+        const { userRole, professional } = extractRoleInfo(session);
         setSession(session);
+        setRole(userRole);
+        setIsProfessional(professional);
       }
     );
 
-    // Cleanup subscription when the component unmounts
     return () => subscription.unsubscribe();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ session, loading }}>
+    <AuthContext.Provider value={{ session, role, isProfessional, loading }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// 4. Custom hook to easily consume the AuthContext in any screen
 export const useAuth = () => useContext(AuthContext);

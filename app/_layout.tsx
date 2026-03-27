@@ -1,5 +1,5 @@
-import { Stack } from 'expo-router';
 import { AuthProvider } from '@/src/providers/AuthProvider';
+import { Stack } from 'expo-router';
 
 /**
  * Root Application Layout
@@ -15,6 +15,7 @@ export default function RootLayout() {
     <AuthProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" options={{ title: 'App' }} />
+        <Stack.Screen name="(admin)" options={{ title: 'Admin' }} /> 
         <Stack.Screen name="(auth)" options={{ title: 'Authentication' }} />
         <Stack.Screen name="index" options={{ title: 'Entry' }} />
       </Stack>

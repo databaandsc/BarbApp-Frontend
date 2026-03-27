@@ -21,17 +21,23 @@ import { supabase } from '../../src/config/supabase';
  */
 
 export default function LoginScreen() {
+  
   const router = useRouter();
-
-  const { session } = useAuth();
 
   // When the screen detects that a session has magically started
   // it will redirect the user directly to the catalog.
+
+  const { session, isProfessional, loading: authLoading } = useAuth();
+
   React.useEffect(() => {
-    if (session) {
-      router.replace('/(tabs)/catalog');
+    // Wait until the AuthProvider has finished reading the role
+    // before making any redirect decision
+    if (!loading && session) {
+      router.replace(isProfessional ? '/(admin)/dashboard' : '/(tabs)/catalog');
     }
-  }, [session]);
+  }, [session, isProfessional, authLoading]);
+  
+
   
   // Local state management for form inputs and UI feedback
   const [email, setEmail] = useState('');
