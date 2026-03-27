@@ -9,7 +9,7 @@ import { supabase } from '../config/supabase';
 
 // IMPORTANTE: Aquí debes poner la IP de tu ordenador para que el móvil 
 // pueda encontrar el servidor en la misma red WiFi.
-const BACKEND_URL = 'http://192.168.1.231:8080';
+const BACKEND_URL = 'http://172.20.10.2:8080';
 
 const api = axios.create({
   baseURL: BACKEND_URL,
