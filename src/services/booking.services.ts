@@ -41,6 +41,39 @@ export const BookingService = {
       throw error;
     }
   },
+
+    /**
+   * [ADMIN] Fetches ALL appointments from ALL clients.
+   * Only to be called from the admin dashboard.
+   */
+    getAllAppointments: async (): Promise<AppointmentResponse[]> => {
+      try {
+        const response = await api.get('/api/appointments/admin/all');
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching all appointments:', error);
+        throw error;
+      }
+    },
+  
+    /**
+     * Updates the status of a given appointment (CONFIRMED, CANCELLED, etc.)
+     * Used by the barber/admin dashboard to manage incoming reservations.
+     */
+    updateAppointmentStatus: async (appointmentId: string, newStatus: string): Promise<AppointmentResponse> => {
+      try {
+        const response = await api.patch(
+          `/api/appointments/${appointmentId}/status`,
+          null,
+          { params: { newStatus } }
+        );
+        return response.data;
+      } catch (error) {
+        console.error('Error updating appointment status:', error);
+        throw error;
+      }
+    },
+      
 };
 
 

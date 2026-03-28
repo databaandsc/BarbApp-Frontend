@@ -42,13 +42,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
      */
     const extractRoleInfo = (session: Session | null) => {
       
-      console.log('== FULL USER METADATA ==', JSON.stringify(session?.user?.user_metadata));
-      // -------------------------------------------
       
       const userRole = (session?.user?.user_metadata?.role as UserRole) || (session ? 'CLIENT' : null);
       const professional = userRole === 'ADMIN' || userRole === 'BARBER';
-      
-      console.log('== EXTRACTED ROLE:', userRole, '| IS PROFESSIONAL:', professional, ' ==');
       
       return { userRole, professional };
     };
