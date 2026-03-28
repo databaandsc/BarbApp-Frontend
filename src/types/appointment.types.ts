@@ -6,6 +6,7 @@
 export interface AppointmentResponse {
     id: string;
     clientId: string;
+    clientName: string;
     barberId: string;
     startAt: string; 
     endAt: string;
