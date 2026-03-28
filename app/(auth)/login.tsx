@@ -32,10 +32,10 @@ export default function LoginScreen() {
   React.useEffect(() => {
     // Wait until the AuthProvider has finished reading the role
     // before making any redirect decision
-    if (!loading && session) {
+    if (!authLoading && session) {
       router.replace(isProfessional ? '/(admin)/dashboard' : '/(tabs)/catalog');
     }
-  }, [session, isProfessional, authLoading]);
+  }, [session, isProfessional, authLoading, router]);
   
 
   
@@ -68,7 +68,7 @@ export default function LoginScreen() {
         // Successful authentication flows should be handled by an Auth Provider listener
         console.log('Login successful!');
       }
-    } catch (err) {
+    } catch {
       setErrorMessage('Error de red inesperado.');
     } finally {
       setLoading(false);

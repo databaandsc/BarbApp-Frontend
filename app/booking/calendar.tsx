@@ -44,7 +44,7 @@ export default function BookingCalendarScreen() {
       // Fetch computed availability from the backend engine
       const slots = await ShopService.getAvailableSlots(barberId, day.dateString);
       setAvailableSlots(slots);
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'No se pudieron cargar las horas disponibles para la fecha seleccionada.');
     } finally {
       setLoadingSlots(false);
@@ -89,7 +89,7 @@ const handleConfirmReservation = async () => {
         `Tu cita de ${serviceName} con ${barberName} a las ${selectedTime} ha sido enviada al profesional y consta como PENDIENTE de confirmación.`
       );
       router.push('/(tabs)/catalog' as any);
-    } catch (error) {
+    } catch {
       Alert.alert("Servidor no disponible", "No se ha podido procesar la reserva con el servidor. Por favor, inténtelo en unos minutos.");
     }
   };

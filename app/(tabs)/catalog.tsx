@@ -26,7 +26,7 @@ export default function CatalogScreen() {
       setLoading(true);
       const data = await BarberService.getPublicCatalog();
       setBarbers(data);
-    } catch (err) {
+    } catch {
       setError('Failed to load the barber catalog. Please try again later.');
     } finally {
       setLoading(false);
