@@ -27,7 +27,7 @@ export default function BarberDetailScreen() {
       setLoading(true);
       const data = await ShopService.getPublicServices();
       setServices(data);
-    } catch (err) {
+    } catch {
       setError('Failed to load services. Please try again later.');
     } finally {
       setLoading(false);

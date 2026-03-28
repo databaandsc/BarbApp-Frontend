@@ -57,7 +57,7 @@ export default function RegisterScreen() {
 
     try {
       // Supabase Auth SignUp including custom user metadata
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: { 
@@ -75,7 +75,7 @@ export default function RegisterScreen() {
         setSuccessMessage('Registro realizado con éxito. Revisa tu correo.');
       }
 
-    } catch (err) {
+    } catch {
       setErrorMessage('Ha ocurrido un error inesperado de red.');
     } finally {
       setLoading(false);

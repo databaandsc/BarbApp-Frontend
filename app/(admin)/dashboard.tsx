@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../constants/theme';
@@ -13,7 +13,7 @@ import { AppointmentResponse } from '../../src/types/appointment.types';
  * Allows status transitions: PENDING -> CONFIRMED or CANCELLED.
  */
 export default function AdminDashboard() {
-  const router = useRouter();
+
   const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -40,7 +40,7 @@ export default function AdminDashboard() {
       await BookingService.updateAppointmentStatus(appointmentId, newStatus);
       // Refresh the list after the update
       fetchAll();
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'No se pudo actualizar la cita.');
     }
   };
