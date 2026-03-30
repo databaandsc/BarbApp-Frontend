@@ -103,8 +103,11 @@ export default function AppointmentsScreen() {
         renderItem={({ item }) => (
           <View style={styles.appointmentCard}>
             <View>
-              <Text style={styles.serviceName}>Reserva #{item.id.slice(0, 8)}</Text>
+              <Text style={styles.serviceName}>Cita con {item.barberName}</Text>
               <Text style={styles.dateText}>{new Date(item.startAt).toLocaleString()}</Text>
+              <Text style={{ color: Colors.textMuted, fontSize: 11, marginTop: 2 }}>
+                Ref: #{item.id.slice(0, 6)}
+              </Text>
             </View>
             
             <View style={{ alignItems: 'flex-end', gap: 8 }}>
