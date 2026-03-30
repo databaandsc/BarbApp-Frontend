@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../constants/theme';
@@ -7,17 +6,30 @@ import { supabase } from '../../src/config/supabase';
 import { BookingService } from '../../src/services/booking.services';
 import { AppointmentResponse } from '../../src/types/appointment.types';
 
+// Define the available filter states.
+// Definir los estados de filtro disponibles.
+type FilterType = 'ALL' | 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+
 /**
  * Admin Dashboard Screen.
+ * Pantalla del panel de administración.
  * Displays ALL appointments in the system for the authenticated professional.
- * Allows status transitions: PENDING -> CONFIRMED or CANCELLED.
+ * Muestra TODAS las citas en el sistema para el profesional autenticado.
  */
 export default function AdminDashboard() {
 
+  // React State for managing data and UI loading.
+  // Estado de React para manejar los datos y la carga visual.
   const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  
+  // State for the active status filter.
+  // Estado para el filtro de estado activo.
+  const [filter, setFilter] = useState<FilterType>('ALL');
 
+  // Fetch all appointments from the backend.
+  // Obtener todas las citas desde el backend.
   const fetchAll = async () => {
     try {
       const data = await BookingService.getAllAppointments();
@@ -34,22 +46,32 @@ export default function AdminDashboard() {
 
   const onRefresh = () => { setRefreshing(true); fetchAll(); };
 
-  // Handles confirming or cancelling an appointment
+  // Handles confirming or cancelling an appointment.
+  // Maneja la confirmación o cancelación de una cita.
   const handleStatusChange = async (appointmentId: string, newStatus: 'CONFIRMED' | 'CANCELLED') => {
     try {
       await BookingService.updateAppointmentStatus(appointmentId, newStatus);
-      // Refresh the list after the update
+      // Refresh the list after the update.
+      // Refrescar la lista después de la actualización.
       fetchAll();
     } catch {
       Alert.alert('Error', 'No se pudo actualizar la cita.');
     }
   };
 
+  // Helper mapping for status badge colors.
+  // Mapeo auxiliar para los colores de las etiquetas de estado.
   const getStatusColor = (status: string) => {
     if (status === 'CONFIRMED') return '#4CAF50';
     if (status === 'CANCELLED') return '#F44336';
     return '#FFC107'; // PENDING: yellow
   };
+
+  // Filter the appointments array based on the selected filter state.
+  // Filtrar el array de citas en base al estado de filtro seleccionado.
+  const filteredAppointments = appointments.filter(
+    (app) => filter === 'ALL' || app.status === filter
+  );
 
   if (loading) {
     return (
@@ -61,6 +83,9 @@ export default function AdminDashboard() {
 
   return (
     <View style={styles.container}>
+      
+      {/* Header Section */}
+      {/* Sección de Cabecera */}
       <View style={styles.header}>
         <Text style={styles.title}>Panel del Barbero</Text>
         <TouchableOpacity onPress={() => supabase.auth.signOut()}>
@@ -68,8 +93,26 @@ export default function AdminDashboard() {
         </TouchableOpacity>
       </View>
 
+      {/* Filter Buttons Section */}
+      {/* Sección de Botones de Filtro */}
+      <View style={styles.filterContainer}>
+        {(['ALL', 'PENDING', 'CONFIRMED', 'CANCELLED'] as FilterType[]).map((f) => (
+          <TouchableOpacity
+            key={f}
+            style={[styles.filterBtn, filter === f && styles.filterBtnActive]}
+            onPress={() => setFilter(f)}
+          >
+            <Text style={[styles.filterBtnText, filter === f && styles.filterBtnTextActive]}>
+              {f === 'ALL' ? 'Todas' : f === 'PENDING' ? 'Pendientes' : f === 'CONFIRMED' ? 'Confirmadas' : 'Canceladas'}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Main List of Appointments */}
+      {/* Lista Principal de Citas */}
       <FlatList
-        data={appointments}
+        data={filteredAppointments}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ padding: 20, flexGrow: 1 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
@@ -82,20 +125,20 @@ export default function AdminDashboard() {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <View style={styles.cardHeader}>
-                <View>
-                    <Text style={styles.cardClientName}>{item.clientName}</Text>
-                    <Text style={styles.cardDate}>{new Date(item.startAt).toLocaleString()}</Text>
-                </View>
-                <View style={[styles.badge, { backgroundColor: getStatusColor(item.status) }]}>
-                    <Text style={styles.badgeText}>{item.status}</Text>
-                </View>
-                </View>
-
+              <View>
+                <Text style={styles.cardClientName}>{item.clientName}</Text>
+                <Text style={styles.cardDate}>{new Date(item.startAt).toLocaleString()}</Text>
+              </View>
+              <View style={[styles.badge, { backgroundColor: getStatusColor(item.status) }]}>
+                <Text style={styles.badgeText}>{item.status}</Text>
+              </View>
+            </View>
 
             <Text style={styles.cardNotes}>{item.clientNotes || 'Sin notas del cliente'}</Text>
             <Text style={styles.cardPrice}>Total: {item.totalPrice}€ · {item.totalDurationMinutes} min</Text>
 
             {/* Action buttons – only shown for PENDING appointments */}
+            {/* Botones de acción – mostrados solo para citas PENDIENTES */}
             {item.status === 'PENDING' && (
               <View style={styles.actions}>
                 <TouchableOpacity style={[styles.btn, styles.btnConfirm]} onPress={() => handleStatusChange(item.id, 'CONFIRMED')}>
@@ -132,4 +175,31 @@ const styles = StyleSheet.create({
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 80 },
   emptyText: { color: Colors.textMuted, marginTop: 16, fontSize: 16 },
   cardClientName: { color: Colors.text, fontWeight: '700', fontSize: 16, marginBottom: 2 },
+  filterContainer: { 
+    flexDirection: 'row', 
+    paddingHorizontal: 15, 
+    paddingVertical: 10,
+    gap: 8,
+    flexWrap: 'wrap'
+  },
+  filterBtn: { 
+    paddingVertical: 6, 
+    paddingHorizontal: 12, 
+    borderRadius: 20, 
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: '#eaeaea'
+  },
+  filterBtnActive: { 
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary
+  },
+  filterBtnText: { 
+    color: Colors.textMuted, 
+    fontSize: 13, 
+    fontWeight: '600' 
+  },
+  filterBtnTextActive: { 
+    color: '#fff' 
+  },
 });
