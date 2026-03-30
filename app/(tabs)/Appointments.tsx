@@ -1,20 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../constants/theme';
 import { BookingService } from '../../src/services/booking.services';
 import { AppointmentResponse } from '../../src/types/appointment.types';
 
-/**
- * My Appointments Screen.
- * Fetches and displays the list of user reservations from the Spring Boot backend.
- */
+// My Appointments Screen.
+// Pantalla de Mis Citas.
+// Fetches and displays the list of user reservations from the Spring Boot backend.
+// Obtiene y muestra la lista de reservas del usuario desde el backend de Spring Boot.
 export default function AppointmentsScreen() {
   const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Fetch data from the server
+  // Fetch data from the server.
+  // Obtener datos del servidor.
   const fetchAppointments = async () => {
     try {
       const data = await BookingService.getMyAppointments();
@@ -36,7 +37,37 @@ export default function AppointmentsScreen() {
     fetchAppointments();
   };
 
-  // Component to show when the list is empty
+  const handleCancelAppointment = (appointmentId: string) => {
+    // Show confirmation dialog before cancelling.
+    // Mostrar un diálogo de confirmación antes de cancelar.
+    Alert.alert(
+      "Cancelar Cita", 
+      "¿Estás seguro de que deseas cancelar esta cita?",
+      [
+        { text: "No", style: "cancel" },
+        { 
+          text: "Sí, cancelar", 
+          style: "destructive",
+          onPress: async () => {
+            try {
+              // Call the backend service to update status to CANCELLED.
+              // Llamar al servicio backend para actualizar el estado a CANCELLED.
+              await BookingService.updateAppointmentStatus(appointmentId, 'CANCELLED');
+              
+              // Refresh the list to reflect the changes.
+              // Refrescar la lista para reflejar los cambios.
+              fetchAppointments();
+            } catch (error) {
+              Alert.alert("Error", "No se pudo cancelar la cita. Inténtalo de nuevo.");
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  // Component to show when the list is empty.
+  // Componente a mostrar cuando la lista está vacía.
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Ionicons name="calendar-outline" size={64} color={Colors.surface} />
@@ -75,8 +106,24 @@ export default function AppointmentsScreen() {
               <Text style={styles.serviceName}>Reserva #{item.id.slice(0, 8)}</Text>
               <Text style={styles.dateText}>{new Date(item.startAt).toLocaleString()}</Text>
             </View>
-            <View style={[styles.statusBadge, { backgroundColor: item.status === 'PENDING' ? '#FFC107' : Colors.primary }]}>
-              <Text style={styles.statusText}>{item.status}</Text>
+            
+            <View style={{ alignItems: 'flex-end', gap: 8 }}>
+              <View style={[styles.statusBadge, { 
+                backgroundColor: item.status === 'PENDING' ? '#FFC107' : 
+                               item.status === 'CANCELLED' ? '#F44336' : Colors.primary }]}>
+                <Text style={styles.statusText}>{item.status}</Text>
+              </View>
+
+              {/* Show cancel button only if status is PENDING or CONFIRMED. */}
+              {/* Mostrar botón de cancelar solo si el estado es PENDING o CONFIRMED. */}
+              {(item.status === 'PENDING' || item.status === 'CONFIRMED') && (
+                <TouchableOpacity 
+                  onPress={() => handleCancelAppointment(item.id)}
+                  style={styles.cancelButton}
+                >
+                  <Text style={styles.cancelButtonText}>Cancelar</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         )}
@@ -93,7 +140,8 @@ const styles = StyleSheet.create({
   emptyStateTitle: { fontSize: 20, fontWeight: 'bold', color: Colors.text, marginTop: 20, marginBottom: 10 },
   emptyStateText: { fontSize: 16, color: Colors.textMuted, textAlign: 'center', lineHeight: 24 },
   
-  // Basic Appointment Card Styles
+  // Basic Appointment Card Styles.
+  // Estilos básicos de la tarjeta de cita.
   appointmentCard: { 
     backgroundColor: Colors.surface, 
     padding: 15, 
@@ -103,6 +151,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center' 
   },
+
+  cancelButton: { 
+    backgroundColor: '#F44336', 
+    paddingVertical: 6, 
+    paddingHorizontal: 12, 
+    borderRadius: 6,
+    marginTop: 5
+  },
+  cancelButtonText: { 
+    color: '#fff', 
+    fontSize: 12, 
+    fontWeight: 'bold' 
+  },
+
   serviceName: { color: Colors.text, fontSize: 16, fontWeight: 'bold' },
   dateText: { color: Colors.textMuted, fontSize: 14, marginTop: 4 },
   statusBadge: { paddingVertical: 4, paddingHorizontal: 8, borderRadius: 6 },
