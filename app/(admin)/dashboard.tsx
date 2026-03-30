@@ -10,6 +10,10 @@ import { AppointmentResponse } from '../../src/types/appointment.types';
 // Definir los estados de filtro disponibles.
 type FilterType = 'ALL' | 'PENDING' | 'CONFIRMED' | 'CANCELLED';
 
+// Define the available time filter states.
+// Definir los estados de filtro de tiempo disponibles.
+type TimeFilterType = 'UPCOMING' | 'HISTORY';
+
 /**
  * Admin Dashboard Screen.
  * Pantalla del panel de administración.
@@ -27,6 +31,10 @@ export default function AdminDashboard() {
   // State for the active status filter.
   // Estado para el filtro de estado activo.
   const [filter, setFilter] = useState<FilterType>('ALL');
+
+  // State for the time line filter (Default: UPCOMING).
+  // Estado para el filtro de línea temporal (Por defecto: UPCOMING).
+  const [timeFilter, setTimeFilter] = useState<TimeFilterType>('UPCOMING');
 
   // Fetch all appointments from the backend.
   // Obtener todas las citas desde el backend.
@@ -67,11 +75,25 @@ export default function AdminDashboard() {
     return '#FFC107'; // PENDING: yellow
   };
 
-  // Filter the appointments array based on the selected filter state.
-  // Filtrar el array de citas en base al estado de filtro seleccionado.
-  const filteredAppointments = appointments.filter(
-    (app) => filter === 'ALL' || app.status === filter
-  );
+  // Filter the appointments array based on the selected filter states.
+  // Filtrar el array de citas en base a los estados de filtro seleccionados.
+  const filteredAppointments = appointments.filter((app) => {
+    // 1. Status Filter (Confirmed, cancelled, etc.)
+    // 1. Filtro de Estado (Confirmadas, canceladas, etc.)
+    const matchesStatus = filter === 'ALL' || app.status === filter;
+    
+    // 2. Time Filter (Upcoming vs History)
+    // 2. Filtro de Tiempo (Próximas vs Historial)
+    const appDate = new Date(app.startAt);
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0); // Start from 00:00 today / Arrancamos desde las 00:00 de hoy
+    
+    const matchesTime = timeFilter === 'HISTORY' || appDate >= startOfToday;
+    
+    // Return true only if BOTH filters pass
+    // Solo mostramos la tarjeta si pasa AMBOS filtros
+    return matchesStatus && matchesTime;
+  });
 
   if (loading) {
     return (
@@ -93,8 +115,24 @@ export default function AdminDashboard() {
         </TouchableOpacity>
       </View>
 
-      {/* Filter Buttons Section */}
-      {/* Sección de Botones de Filtro */}
+      {/* Time Filter Buttons Section */}
+      {/* Sección de Botones de Filtro de Tiempo */}
+      <View style={styles.filterContainer}>
+        {(['UPCOMING', 'HISTORY'] as TimeFilterType[]).map((tf) => (
+          <TouchableOpacity
+            key={tf}
+            style={[styles.filterBtn, timeFilter === tf && styles.filterBtnActive]}
+            onPress={() => setTimeFilter(tf)}
+          >
+            <Text style={[styles.filterBtnText, timeFilter === tf && styles.filterBtnTextActive]}>
+              {tf === 'UPCOMING' ? 'Próximas Citas' : 'Historial Completo'}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Status Filter Buttons Section */}
+      {/* Sección de Botones de Filtro de Estado */}
       <View style={styles.filterContainer}>
         {(['ALL', 'PENDING', 'CONFIRMED', 'CANCELLED'] as FilterType[]).map((f) => (
           <TouchableOpacity
