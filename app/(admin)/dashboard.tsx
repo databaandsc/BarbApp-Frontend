@@ -82,11 +82,15 @@ export default function AdminDashboard() {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <View style={styles.cardHeader}>
-              <Text style={styles.cardDate}>{new Date(item.startAt).toLocaleString()}</Text>
-              <View style={[styles.badge, { backgroundColor: getStatusColor(item.status) }]}>
-                <Text style={styles.badgeText}>{item.status}</Text>
-              </View>
-            </View>
+                <View>
+                    <Text style={styles.cardClientName}>{item.clientName}</Text>
+                    <Text style={styles.cardDate}>{new Date(item.startAt).toLocaleString()}</Text>
+                </View>
+                <View style={[styles.badge, { backgroundColor: getStatusColor(item.status) }]}>
+                    <Text style={styles.badgeText}>{item.status}</Text>
+                </View>
+                </View>
+
 
             <Text style={styles.cardNotes}>{item.clientNotes || 'Sin notas del cliente'}</Text>
             <Text style={styles.cardPrice}>Total: {item.totalPrice}€ · {item.totalDurationMinutes} min</Text>
@@ -127,4 +131,5 @@ const styles = StyleSheet.create({
   btnText: { color: '#fff', fontWeight: 'bold' },
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 80 },
   emptyText: { color: Colors.textMuted, marginTop: 16, fontSize: 16 },
+  cardClientName: { color: Colors.text, fontWeight: '700', fontSize: 16, marginBottom: 2 },
 });
