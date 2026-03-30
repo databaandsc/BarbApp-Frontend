@@ -56,16 +56,30 @@ export default function AdminDashboard() {
 
   // Handles confirming or cancelling an appointment.
   // Maneja la confirmación o cancelación de una cita.
-  const handleStatusChange = async (appointmentId: string, newStatus: 'CONFIRMED' | 'CANCELLED') => {
-    try {
-      await BookingService.updateAppointmentStatus(appointmentId, newStatus);
-      // Refresh the list after the update.
-      // Refrescar la lista después de la actualización.
-      fetchAll();
-    } catch {
-      Alert.alert('Error', 'No se pudo actualizar la cita.');
-    }
-  };
+    const confirmStatusChange = (appointmentId: string, newStatus: 'CONFIRMED' | 'CANCELLED') => {
+        const actionName = newStatus === 'CONFIRMED' ? 'confirmar' : 'rechazar';
+        
+        Alert.alert(
+          'Confirmación',
+          `¿Estás seguro de que deseas ${actionName} esta cita?`,
+          [
+            { text: 'Volver atrás', style: 'cancel' },
+            { 
+              text: `Sí, ${actionName}`, 
+              style: newStatus === 'CANCELLED' ? 'destructive' : 'default',
+              onPress: async () => {
+                try {
+                  await BookingService.updateAppointmentStatus(appointmentId, newStatus);
+                  fetchAll(); 
+                } catch {
+                  Alert.alert('Error', 'No se pudo actualizar la cita.');
+                }
+              }
+            }
+          ]
+        );
+      };
+    
 
   // Helper mapping for status badge colors.
   // Mapeo auxiliar para los colores de las etiquetas de estado.
@@ -179,10 +193,10 @@ export default function AdminDashboard() {
             {/* Botones de acción – mostrados solo para citas PENDIENTES */}
             {item.status === 'PENDING' && (
               <View style={styles.actions}>
-                <TouchableOpacity style={[styles.btn, styles.btnConfirm]} onPress={() => handleStatusChange(item.id, 'CONFIRMED')}>
+                <TouchableOpacity style={[styles.btn, styles.btnConfirm]} onPress={() => confirmStatusChange(item.id, 'CONFIRMED')}>
                   <Text style={styles.btnText}>✓ Confirmar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.btn, styles.btnCancel]} onPress={() => handleStatusChange(item.id, 'CANCELLED')}>
+                <TouchableOpacity style={[styles.btn, styles.btnCancel]} onPress={() => confirmStatusChange(item.id, 'CANCELLED')}>
                   <Text style={styles.btnText}>✗ Rechazar</Text>
                 </TouchableOpacity>
               </View>

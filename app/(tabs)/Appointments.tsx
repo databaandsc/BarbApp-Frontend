@@ -118,8 +118,8 @@ export default function AppointmentsScreen() {
               </View>
 
               {/* Show cancel button only if status is PENDING or CONFIRMED. */}
-              {/* Mostrar botón de cancelar solo si el estado es PENDING o CONFIRMED. */}
-              {(item.status === 'PENDING' || item.status === 'CONFIRMED') && (
+              {/* Mostrar botón de cancelar solo si el estado es PENDING. */}
+              {item.status === 'PENDING' && (
                 <TouchableOpacity 
                   onPress={() => handleCancelAppointment(item.id)}
                   style={styles.cancelButton}
@@ -127,6 +127,7 @@ export default function AppointmentsScreen() {
                   <Text style={styles.cancelButtonText}>Cancelar</Text>
                 </TouchableOpacity>
               )}
+
             </View>
           </View>
         )}
