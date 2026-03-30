@@ -15,5 +15,7 @@ export interface AppointmentResponse {
     totalPrice: number;
     totalDurationMinutes: number;
     clientNotes: string;
+    clientPhone: string;
+    serviceNames: string[];
   }
   

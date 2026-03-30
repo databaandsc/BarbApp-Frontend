@@ -157,16 +157,36 @@ export default function AdminCalendar() {
             {/* Right Column: Event/Client Block */}
             {/* Columna Derecha: Bloque del Evento/Cliente */}
             <View style={[styles.eventCard, item.status === 'PENDING' && { borderLeftColor: '#FFC107' }]}>
-              <Text style={styles.eventClientName}>{item.clientName}</Text>
-              <Text style={styles.eventServiceDuration}>{item.totalDurationMinutes} min · {item.totalPrice}€</Text>
-              {item.clientNotes ? <Text style={styles.eventNotes}>"{item.clientNotes}"</Text> : null}
               
-              {/* Event Status Badge */}
+              {/* Línea Superior: Nombre y Teléfono */}
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+                <Text style={styles.eventClientName}>{item.clientName}</Text>
+                <Text style={{ color: Colors.primary, fontWeight: 'bold', fontSize: 13 }}>
+                  📞 {item.clientPhone}
+                </Text>
+              </View>
+
+              {/* Línea de Servicios contratados (Corte, Barba, etc.) */}
+              <Text style={{ fontSize: 15, fontWeight: '600', color: Colors.text, marginBottom: 4 }}>
+                {item.serviceNames?.join(', ') || 'Servicio General'}
+              </Text>
+
+              {/* Dinero y Tiempo */}
+              <Text style={styles.eventServiceDuration}>
+                {item.totalDurationMinutes} min · {item.totalPrice}€
+              </Text>
+              
+              {/* Notas del cliente (SOLO si ha escrito algo real y no el autogenerado) */}
+              {item.clientNotes && !item.clientNotes.includes('Reserva gestionada automáticamente') && (
+                <Text style={styles.eventNotes}>"{item.clientNotes}"</Text>
+              )}
+              
               {/* Etiqueta de Estado del evento */}
                <View style={[styles.statusBadge, { backgroundColor: item.status === 'PENDING' ? '#FFC107' : '#4CAF50' }]}>
                    <Text style={styles.statusText}>{item.status}</Text>
                </View>
             </View>
+
           </View>
         )}
       />
