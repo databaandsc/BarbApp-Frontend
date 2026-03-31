@@ -17,7 +17,7 @@ export const BarberService = {
       const response = await api.get<PublicBarber[]>('/api/public/barbers');
       return response.data;
     } catch (error) {
-      console.error("Error obteniendo el catálogo de barberos:", error);
+      // Error silenciado
       throw error; 
     }
   }

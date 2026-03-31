@@ -13,7 +13,7 @@ export const ShopService = {
       const response = await api.get('/api/public/services');
       return response.data;
     } catch (error) {
-      console.error('Error fetching public services from backend:', error);
+      // Error silenciado
       throw error;
     }
   },
@@ -37,7 +37,7 @@ export const ShopService = {
       });
       return response.data; 
     } catch (error) {
-      console.error('Error fetching available slots from backend:', error);
+      // Error silenciado
       throw error;
     }
   }

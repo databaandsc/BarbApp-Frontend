@@ -45,7 +45,7 @@ export default function AdminCalendar() {
       const data = await BookingService.getAllAppointments();
       setAppointments(data);
     } catch {
-      console.error('Error loading appointments'); // Error loading appointments
+      // Error silenciado para producción
     } finally {
       setLoading(false);
     }

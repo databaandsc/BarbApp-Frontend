@@ -43,7 +43,7 @@ export default function AdminDashboard() {
       const data = await BookingService.getAllAppointments();
       setAppointments(data);
     } catch (error) {
-      console.error('Error loading all appointments:', error);
+      // Se silencia este error en producción
     } finally {
       setLoading(false);
       setRefreshing(false);

@@ -21,7 +21,7 @@ export default function AppointmentsScreen() {
       const data = await BookingService.getMyAppointments();
       setAppointments(data);
     } catch (error) {
-      console.error('Error loading appointments:', error);
+      // Error silenciado
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -57,7 +57,7 @@ export default function AppointmentsScreen() {
               // Refresh the list to reflect the changes.
               // Refrescar la lista para reflejar los cambios.
               fetchAppointments();
-            } catch (error) {
+            } catch {
               Alert.alert("Error", "No se pudo cancelar la cita. Inténtalo de nuevo.");
             }
           }

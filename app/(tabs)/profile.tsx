@@ -30,7 +30,7 @@ export default function ProfileScreen() {
       router.replace('/(auth)/login');
       
     } catch (err) {
-      console.error(err);
+      // Error silenciado
     }
   };
   

@@ -22,7 +22,7 @@ export const BookingService = {
       const response = await api.post('/api/appointments', request);
       return response.data;
     } catch (error) {
-      console.error('Error creating appointment in backend:', error);
+      // Error silenciado
       throw error;
     }
   },
@@ -37,7 +37,7 @@ export const BookingService = {
       const response = await api.get('/api/appointments'); 
       return response.data;
     } catch (error) {
-      console.error('Error fetching my appointments:', error);
+      // Error silenciado
       throw error;
     }
   },
@@ -51,7 +51,7 @@ export const BookingService = {
         const response = await api.get('/api/appointments/admin/all');
         return response.data;
       } catch (error) {
-        console.error('Error fetching all appointments:', error);
+        // Error silenciado
         throw error;
       }
     },
@@ -69,7 +69,7 @@ export const BookingService = {
         );
         return response.data;
       } catch (error) {
-        console.error('Error updating appointment status:', error);
+        // Error silenciado
         throw error;
       }
     },
