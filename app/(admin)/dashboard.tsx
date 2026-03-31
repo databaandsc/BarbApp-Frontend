@@ -1,10 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import StatusBadge from '../../components/StatusBadge';
 import { Colors } from '../../constants/theme';
 import { supabase } from '../../src/config/supabase';
 import { BookingService } from '../../src/services/booking.services';
 import { AppointmentResponse } from '../../src/types/appointment.types';
+
 
 // Define the available filter states.
 // Definir los estados de filtro disponibles.
@@ -181,9 +183,7 @@ export default function AdminDashboard() {
                 <Text style={styles.cardClientName}>{item.clientName}</Text>
                 <Text style={styles.cardDate}>{new Date(item.startAt).toLocaleString()}</Text>
               </View>
-              <View style={[styles.badge, { backgroundColor: getStatusColor(item.status) }]}>
-                <Text style={styles.badgeText}>{item.status}</Text>
-              </View>
+              <StatusBadge status={item.status} />
             </View>
 
             <Text style={styles.cardNotes}>{item.clientNotes || 'Sin notas del cliente'}</Text>

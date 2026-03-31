@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import StatusBadge from '../../components/StatusBadge';
 import { Colors } from '../../constants/theme';
 import { BookingService } from '../../src/services/booking.services';
 import { AppointmentResponse } from '../../src/types/appointment.types';
+
 
 // My Appointments Screen.
 // Pantalla de Mis Citas.
@@ -111,11 +113,8 @@ export default function AppointmentsScreen() {
             </View>
             
             <View style={{ alignItems: 'flex-end', gap: 8 }}>
-              <View style={[styles.statusBadge, { 
-                backgroundColor: item.status === 'PENDING' ? '#FFC107' : 
-                               item.status === 'CANCELLED' ? '#F44336' : Colors.primary }]}>
-                <Text style={styles.statusText}>{item.status}</Text>
-              </View>
+            <StatusBadge status={item.status} />
+
 
               {/* Show cancel button only if status is PENDING or CONFIRMED. */}
               {/* Mostrar botón de cancelar solo si el estado es PENDING. */}
