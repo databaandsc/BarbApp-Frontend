@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import StatusBadge from '../../components/StatusBadge';
 import { Colors } from '../../constants/theme';
 import { BookingService } from '../../src/services/booking.services';
 import { AppointmentResponse } from '../../src/types/appointment.types';
+
 
 /**
  * Admin Daily Calendar Component.
@@ -45,7 +47,7 @@ export default function AdminCalendar() {
       const data = await BookingService.getAllAppointments();
       setAppointments(data);
     } catch {
-      console.error('Error loading appointments'); // Error loading appointments
+      // Error silenciado para producción
     } finally {
       setLoading(false);
     }
@@ -182,9 +184,8 @@ export default function AdminCalendar() {
               )}
               
               {/* Etiqueta de Estado del evento */}
-               <View style={[styles.statusBadge, { backgroundColor: item.status === 'PENDING' ? '#FFC107' : '#4CAF50' }]}>
-                   <Text style={styles.statusText}>{item.status}</Text>
-               </View>
+              <StatusBadge status={item.status} />
+
             </View>
 
           </View>

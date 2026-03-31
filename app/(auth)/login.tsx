@@ -66,7 +66,7 @@ export default function LoginScreen() {
         setErrorMessage(error.message);
       } else {
         // Successful authentication flows should be handled by an Auth Provider listener
-        console.log('Login successful!');
+        // Login successful (silenciado)
       }
     } catch {
       setErrorMessage('Error de red inesperado.');

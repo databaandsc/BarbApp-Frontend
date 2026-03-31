@@ -13,8 +13,9 @@ export const Colors = {
   primary: '#C5B396',       // High-emphasis elements (Gold/Sand accent)
   text: '#EAEAEA',          // High-contrast text
   textMuted: '#9CA3AF',     // Low-emphasis/Placeholder text
-  error: '#EF4444',         // Warning/Error semantic color
-  success: '#10B981',       // Confirmation/Success semantic color
+  error: '#F44336',         // Warning/Error semantic color (Rojo)
+  success: '#4CAF50',       // Confirmation/Success semantic color (Verde)
+  warning: '#FFC107',       // Alert/Pending semantic color (Amarillo)
 };
 
 /**

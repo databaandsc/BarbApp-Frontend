@@ -1,10 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import StatusBadge from '../../components/StatusBadge';
 import { Colors } from '../../constants/theme';
 import { supabase } from '../../src/config/supabase';
 import { BookingService } from '../../src/services/booking.services';
 import { AppointmentResponse } from '../../src/types/appointment.types';
+
 
 // Define the available filter states.
 // Definir los estados de filtro disponibles.
@@ -43,7 +45,7 @@ export default function AdminDashboard() {
       const data = await BookingService.getAllAppointments();
       setAppointments(data);
     } catch (error) {
-      console.error('Error loading all appointments:', error);
+      // Se silencia este error en producción
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -181,9 +183,7 @@ export default function AdminDashboard() {
                 <Text style={styles.cardClientName}>{item.clientName}</Text>
                 <Text style={styles.cardDate}>{new Date(item.startAt).toLocaleString()}</Text>
               </View>
-              <View style={[styles.badge, { backgroundColor: getStatusColor(item.status) }]}>
-                <Text style={styles.badgeText}>{item.status}</Text>
-              </View>
+              <StatusBadge status={item.status} />
             </View>
 
             <Text style={styles.cardNotes}>{item.clientNotes || 'Sin notas del cliente'}</Text>
@@ -221,8 +221,8 @@ const styles = StyleSheet.create({
   cardPrice: { color: Colors.primary, fontWeight: '600', fontSize: 14 },
   actions: { flexDirection: 'row', gap: 10, marginTop: 12 },
   btn: { flex: 1, paddingVertical: 10, borderRadius: 8, alignItems: 'center' },
-  btnConfirm: { backgroundColor: '#4CAF50' },
-  btnCancel: { backgroundColor: '#F44336' },
+  btnConfirm: { backgroundColor: Colors.success },
+  btnCancel: { backgroundColor: Colors.error },
   btnText: { color: '#fff', fontWeight: 'bold' },
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 80 },
   emptyText: { color: Colors.textMuted, marginTop: 16, fontSize: 16 },
