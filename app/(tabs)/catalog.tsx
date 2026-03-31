@@ -5,6 +5,11 @@ import { Colors } from '../../constants/theme';
 import { BarberService } from '../../src/services/barber.service';
 import { PublicBarber } from '../../src/types/barber.types';
 
+/**
+ * Catalog Screen / Pantalla del Catálogo
+ * Displays the list of available barbers for clients to book.
+ * Muestra la lista de barberos disponibles para que los clientes puedan reservar.
+ */
 export default function CatalogScreen() {
   const [barbers, setBarbers] = useState<PublicBarber[]>([]);
   const [loading, setLoading] = useState(true);
@@ -12,6 +17,7 @@ export default function CatalogScreen() {
 
   /**
    * Initialize catalog data on component mount.
+   * Inicializa los datos del catálogo al montar el componente.
    */
   useEffect(() => {
     loadBarbers();
@@ -19,7 +25,10 @@ export default function CatalogScreen() {
 
   /**
    * Fetches the public barber list from the API asynchronously.
+   * Obtiene la lista pública de barberos desde la API de forma asíncrona.
+   * 
    * Handles state transitions for loading status and potential network errors.
+   * Maneja las transiciones de estado para el progreso de carga y posibles errores de red.
    */
   const loadBarbers = async () => {
     try {
@@ -27,7 +36,7 @@ export default function CatalogScreen() {
       const data = await BarberService.getPublicCatalog();
       setBarbers(data);
     } catch {
-      setError('Failed to load the barber catalog. Please try again later.');
+      setError('Failed to load the barber catalog. Please try again later. / Error al cargar el catálogo.');
     } finally {
       setLoading(false);
     }
@@ -35,40 +44,42 @@ export default function CatalogScreen() {
 
   /**
    * Renders a styled UI card for an individual barber record.
-   * Ensures the layout supports both generic and specific asset rendering.
+   * Renderiza una tarjeta estilizada para un registro individual de barbero.
    * 
-   * @param item - The PublicBarber object data structure to render.
+   * @param item The PublicBarber object data structure to render. / El objeto PublicBarber a renderizar.
    */
   const renderBarberCard = ({ item }: { item: PublicBarber }) => (
     <View style={styles.card}>
       {/* Avatar Placeholder: Dynamically generated UI Avatars based on user's full name */}
+      {/* Avatar Placeholder: Avatares generados dinámicamente basados en el nombre completo del usuario */}
       <Image 
         source={{ uri: `https://ui-avatars.com/api/?name=${item.name}+${item.surname}&background=333333&color=ffffff&size=150` }} 
         style={styles.avatarImage} 
       />
       
       {/* Core Barber Information Section */}
+      {/* Sección principal de información del barbero */}
       <View style={styles.infoContainer}>
         <Text style={styles.nameText}>{item.name}</Text>
         <Text style={styles.surnameText}>{item.surname}</Text>
         <Text style={styles.specialtyText}>Senior Barber</Text>
       </View>
 
-    {/* Primary Call-To-Action (CTA) */}
-    <TouchableOpacity 
-        style={styles.actionButton}
-        onPress={() => router.push({
-        pathname: `/barber/${item.id}` as any,
-        params: { name: item.name, surname: item.surname }
-        })}
-        >
-        <Text style={styles.actionButtonText}>Book</Text>
+      {/* Primary Call-To-Action (CTA) */}
+      {/* Botón de llamada a la acción principal */}
+      <TouchableOpacity 
+          style={styles.actionButton}
+          onPress={() => router.push({
+          pathname: `/barber/${item.id}` as any,
+          params: { name: item.name, surname: item.surname }
+          })}
+          >
+          <Text style={styles.actionButtonText}>Book</Text>
       </TouchableOpacity>
-
     </View>
   );
 
-  // Render network loading state
+  // Render network loading state / Renderizar estado de carga de red
   if (loading) {
     return (
       <View style={styles.centerContainer}>
@@ -77,7 +88,7 @@ export default function CatalogScreen() {
     );
   }
 
-  // Render network error state
+  // Render network error state / Renderizar estado de error de red
   if (error) {
     return (
       <View style={styles.centerContainer}>
@@ -86,10 +97,10 @@ export default function CatalogScreen() {
     );
   }
 
-  // Renters the populated catalog view
+  // Render the populated catalog view / Renderizar la vista del catálogo con datos
   return (
     <View style={styles.container}>
-      <Text style={styles.headerTitle}>Our Barbers</Text>
+      <Text style={styles.headerTitle}>Our Barbers / Barberos</Text>
       
       <FlatList
         data={barbers}
@@ -97,7 +108,7 @@ export default function CatalogScreen() {
         renderItem={renderBarberCard}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>No barbers registered yet.</Text>
+          <Text style={styles.emptyText}>No barbers registered yet. / No hay barberos registrados.</Text>
         }
       />
     </View>
