@@ -156,8 +156,8 @@ const styles = StyleSheet.create({
   },
 
   cancelButton: { 
-    backgroundColor: '#F44336', 
-    paddingVertical: 6, 
+    backgroundColor: Colors.error, 
+    paddingVertical: 6,  
     paddingHorizontal: 12, 
     borderRadius: 6,
     marginTop: 5
