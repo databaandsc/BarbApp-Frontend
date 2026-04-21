@@ -1,5 +1,10 @@
 import { AuthProvider } from '@/src/providers/AuthProvider';
 import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+
+// Prevenimos que la pantalla de carga (Logo) desaparezca instantáneamente
+SplashScreen.preventAutoHideAsync();
 
 /**
  * Root Application Layout
@@ -11,6 +16,18 @@ import { Stack } from 'expo-router';
  */
 
 export default function RootLayout() {
+
+  useEffect(() => {
+    // Forzamos que el logo del principio se quede viéndose durante 2.5 segundos (2500ms)
+    // para que la entrada a la app sea más estética y no un pantallazo rápido.
+    const holdSplashScreen = async () => {
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      await SplashScreen.hideAsync();
+    };
+
+    holdSplashScreen();
+  }, []);
+
   return (
     <AuthProvider>
       <Stack screenOptions={{ headerShown: false }}>
