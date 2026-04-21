@@ -198,9 +198,20 @@ const styles = StyleSheet.create({
   calendarContainer: { marginHorizontal: 20, borderRadius: 12, overflow: 'hidden' },
   
   slotsSection: { marginTop: 25, paddingHorizontal: 20 },
-  slotsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  slotsGrid: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    justifyContent: 'space-between', 
+    gap: 10 
+  },
   slotChip: { 
-    borderWidth: 1, borderColor: Colors.surface, borderRadius: 8, paddingVertical: 10, paddingHorizontal: 16, backgroundColor: Colors.background 
+    width: '23%', 
+    alignItems: 'center', 
+    borderWidth: 1, 
+    borderColor: Colors.surface, 
+    borderRadius: 8, 
+    paddingVertical: 10, 
+    backgroundColor: Colors.background 
   },
   slotChipSelected: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   slotText: { color: Colors.text, fontSize: 16, fontWeight: '500' },

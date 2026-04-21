@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "BarbApp-Frontend",
+    "name": "BarbApp",
     "slug": "BarbApp-Frontend",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,30 +19,34 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.databaandsc.BarbAppFrontend"
     },
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#2A2B2E"
-          }
-        }
-      ]
-    ],
+   "plugins": [
+  "expo-router",
+  [
+    "expo-splash-screen",
+    {
+      "image": "./assets/images/splash-icon.png",
+      "imageWidth": 250,
+      "resizeMode": "contain",
+      "backgroundColor": "#2A2B2E"
+    }
+  ]
+],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0439ab08-085e-474b-9f51-4f0a1917b5ce"
+      }
     }
   }
 }
