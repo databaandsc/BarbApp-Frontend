@@ -65,7 +65,7 @@ const handleConfirmReservation = async () => {
         "Autenticación Requerida",
         "Por favor, inicia sesión o regístrate para solicitar la cita."
       );
-      router.push('/login' as any); 
+      router.push('/(tabs)/profile' as any); 
       return; 
     }
     

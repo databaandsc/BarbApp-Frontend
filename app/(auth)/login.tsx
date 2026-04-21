@@ -122,6 +122,7 @@ export default function LoginScreen() {
             ¿No tienes cuenta? <Text style={styles.linkHighlight}>Regístrate</Text>
           </Text>
         </TouchableOpacity>
+
       </ScrollView>
     </KeyboardAvoidingView>
   );

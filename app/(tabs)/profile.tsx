@@ -4,8 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
+import LoginScreen from '../(auth)/login';
 import { AppButton } from '../../components/AppButton';
 import { Colors } from '../../constants/theme';
+
 
 /**
  * Customer Profile Screen / Pantalla del Perfil del Cliente
@@ -13,8 +15,11 @@ import { Colors } from '../../constants/theme';
  * Muestra el correo electrónico de la sesión actual y proporciona la funcionalidad de cerrar sesión.
  */
 export default function ProfileScreen() {
-  const { session } = useAuth();
+  const { session } = useAuth()
   const router = useRouter();
+  if (!session) {
+    return <LoginScreen />;
+  }
   
   // Extract the logged-in user's email to display it on screen
   // Extrae el correo del usuario logueado para mostrarlo por pantalla

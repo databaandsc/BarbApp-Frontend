@@ -1,10 +1,11 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { supabase } from '../../src/config/supabase';
 import { AppButton } from '../../components/AppButton';
 import { AppInput } from '../../components/AppInput';
 import { Colors } from '../../constants/theme';
+import { supabase } from '../../src/config/supabase';
+
 
 /**
  * Registration Screen
@@ -93,6 +94,7 @@ export default function RegisterScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
+        
         {/* Header Section */}
         <Text style={styles.title}>Únete</Text>
         <Text style={styles.subtitle}>Crea tu cuenta premium en BarbApp</Text>
