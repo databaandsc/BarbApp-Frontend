@@ -28,7 +28,7 @@ export default function BarberDetailScreen() {
       const data = await ShopService.getPublicServices();
       setServices(data);
     } catch {
-      setError('Failed to load services. Please try again later.');
+      setError('Error al cargar los servicios. Por favor, inténtelo más tarde.');
     } finally {
       setLoading(false);
     }
@@ -65,7 +65,7 @@ export default function BarberDetailScreen() {
             }
           })}
         >
-          <Text style={styles.selectButtonText}>Select</Text>
+          <Text style={styles.selectButtonText}>Seleccionar</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -85,7 +85,7 @@ export default function BarberDetailScreen() {
           />
           <View>
             <Text style={styles.headerName}>{name} {surname}</Text>
-            <Text style={styles.headerSubtitle}>Choose a service</Text>
+            <Text style={styles.headerSubtitle}>Elige un servicio</Text>
           </View>
         </View>
       </View>
@@ -106,7 +106,7 @@ export default function BarberDetailScreen() {
           renderItem={renderServiceCard}
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>No services available at this moment.</Text>
+            <Text style={styles.emptyText}>No hay servicios disponibles en este momento.</Text>
           }
         />
       )}
