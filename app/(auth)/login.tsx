@@ -7,6 +7,7 @@ import { AppInput } from '../../components/AppInput';
 import { Colors } from '../../constants/theme';
 import { supabase } from '../../src/config/supabase';
 
+
 // IMPORTA nuestro nuevo api de src/api/api.ts primero arriba del todo del archivo
 
 /**
@@ -85,6 +86,7 @@ export default function LoginScreen() {
         bounces={false}
         keyboardShouldPersistTaps="handled" 
       >
+      
         {/* Branding Section */}
         <Text style={styles.title}>BarbApp</Text>
         <Text style={styles.subtitle}>Reserva en tu barbería favorita</Text>
@@ -120,6 +122,7 @@ export default function LoginScreen() {
             ¿No tienes cuenta? <Text style={styles.linkHighlight}>Regístrate</Text>
           </Text>
         </TouchableOpacity>
+
       </ScrollView>
     </KeyboardAvoidingView>
   );

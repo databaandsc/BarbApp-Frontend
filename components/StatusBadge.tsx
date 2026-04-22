@@ -19,10 +19,16 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
     return Colors.warning;
   };
 
+  const getTranslatedStatus = () => {
+    if (status === 'CONFIRMED') return 'CONFIRMADA';
+    if (status === 'CANCELLED') return 'CANCELADA';
+    if (status === 'PENDING') return 'PENDIENTE';
+    return status;
+  };
 
   return (
     <View style={[styles.badge, { backgroundColor: getBackgroundColor() }]}>
-      <Text style={styles.badgeText}>{status}</Text>
+      <Text style={styles.badgeText}>{getTranslatedStatus()}</Text>
     </View>
   );
 }

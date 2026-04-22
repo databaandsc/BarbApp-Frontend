@@ -106,10 +106,10 @@ export default function AppointmentsScreen() {
           <View style={styles.appointmentCard}>
             <View>
               <Text style={styles.serviceName}>Cita con {item.barberName}</Text>
-              <Text style={styles.dateText}>{new Date(item.startAt).toLocaleString()}</Text>
-              <Text style={{ color: Colors.textMuted, fontSize: 11, marginTop: 2 }}>
-                Ref: #{item.id.slice(0, 6)}
+              <Text style={styles.dateText}>
+                {item.startAt.substring(0, 16).replace('T', ' a las ')}
               </Text>
+
             </View>
             
             <View style={{ alignItems: 'flex-end', gap: 8 }}>

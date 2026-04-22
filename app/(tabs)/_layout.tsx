@@ -29,7 +29,7 @@ export default function TabLayout() {
       
       {/* My Appointments Tab */}
       <Tabs.Screen
-        name="appointments"
+        name="Appointments"
         options={{
           title: 'Mis Citas',
           tabBarIcon: ({ color, size }) => (

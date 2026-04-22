@@ -74,7 +74,7 @@ export default function CatalogScreen() {
           params: { name: item.name, surname: item.surname }
           })}
           >
-          <Text style={styles.actionButtonText}>Book</Text>
+          <Text style={styles.actionButtonText}>Reservar</Text>
       </TouchableOpacity>
     </View>
   );
@@ -100,7 +100,7 @@ export default function CatalogScreen() {
   // Render the populated catalog view / Renderizar la vista del catálogo con datos
   return (
     <View style={styles.container}>
-      <Text style={styles.headerTitle}>Our Barbers / Barberos</Text>
+      <Text style={styles.headerTitle}>Barberos</Text>
       
       <FlatList
         data={barbers}

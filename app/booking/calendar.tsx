@@ -65,15 +65,27 @@ const handleConfirmReservation = async () => {
         "Autenticación Requerida",
         "Por favor, inicia sesión o regístrate para solicitar la cita."
       );
-      router.push('/login' as any); 
+      router.push('/(tabs)/profile' as any); 
       return; 
     }
     
-    // 2. Parse selected dates into Backend-compatible ISO-8601 format
+    // 2. Construimos la fecha puramente como texto sin matemáticas
+    // para evitar que Javascript haga cosas raras con la zona horaria.
     const startAt = `${selectedDate}T${selectedTime}:00Z`;
-    const startDateObj = new Date(startAt);
-    startDateObj.setMinutes(startDateObj.getMinutes() + parseInt(serviceDuration, 10));
-    const endAt = startDateObj.toISOString();
+    
+    // Sumamos los minutos de la forma más tonta (y segura) posible:
+    const [hours, minutes] = selectedTime.split(':').map(Number);
+    const duration = parseInt(serviceDuration, 10);
+    
+    let endMinutes = minutes + duration;
+    let endHours = hours + Math.floor(endMinutes / 60);
+    endMinutes = endMinutes % 60;
+    
+    // Añadimos el cero delante si es necesario (ej: 09, 05...)
+    const pad = (num: number) => String(num).padStart(2, '0');
+    const endAt = `${selectedDate}T${pad(endHours)}:${pad(endMinutes)}:00Z`;
+  
+
 
     // 3. Dispatch data payload to the API
     try {
@@ -198,9 +210,20 @@ const styles = StyleSheet.create({
   calendarContainer: { marginHorizontal: 20, borderRadius: 12, overflow: 'hidden' },
   
   slotsSection: { marginTop: 25, paddingHorizontal: 20 },
-  slotsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  slotsGrid: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    justifyContent: 'space-between', 
+    gap: 10 
+  },
   slotChip: { 
-    borderWidth: 1, borderColor: Colors.surface, borderRadius: 8, paddingVertical: 10, paddingHorizontal: 16, backgroundColor: Colors.background 
+    width: '23%', 
+    alignItems: 'center', 
+    borderWidth: 1, 
+    borderColor: Colors.surface, 
+    borderRadius: 8, 
+    paddingVertical: 10, 
+    backgroundColor: Colors.background 
   },
   slotChipSelected: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   slotText: { color: Colors.text, fontSize: 16, fontWeight: '500' },
