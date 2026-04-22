@@ -15,8 +15,14 @@ import { Colors } from '../../constants/theme';
  * Muestra el correo electrónico de la sesión actual y proporciona la funcionalidad de cerrar sesión.
  */
 export default function ProfileScreen() {
-  const { session } = useAuth()
+  const { session, isProfessional } = useAuth(); 
   const router = useRouter();
+  
+  React.useEffect(() => {
+    if (session && isProfessional) {
+      router.replace('/(admin)/dashboard');
+    }
+  }, [session, isProfessional]);
   if (!session) {
     return <LoginScreen />;
   }

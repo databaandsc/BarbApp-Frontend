@@ -181,7 +181,7 @@ export default function AdminDashboard() {
             <View style={styles.cardHeader}>
               <View>
                 <Text style={styles.cardClientName}>{item.clientName}</Text>
-                <Text style={styles.cardDate}>{new Date(item.startAt).toLocaleString()}</Text>
+                <Text style={styles.cardDate}>{item.startAt.substring(0, 16).replace('T', ' a las ')}</Text>
               </View>
               <StatusBadge status={item.status} />
             </View>
