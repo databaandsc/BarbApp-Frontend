@@ -69,11 +69,23 @@ const handleConfirmReservation = async () => {
       return; 
     }
     
-    // 2. Parse selected dates into Backend-compatible ISO-8601 format
+    // 2. Construimos la fecha puramente como texto sin matemáticas
+    // para evitar que Javascript haga cosas raras con la zona horaria.
     const startAt = `${selectedDate}T${selectedTime}:00Z`;
-    const startDateObj = new Date(startAt);
-    startDateObj.setMinutes(startDateObj.getMinutes() + parseInt(serviceDuration, 10));
-    const endAt = startDateObj.toISOString();
+    
+    // Sumamos los minutos de la forma más tonta (y segura) posible:
+    const [hours, minutes] = selectedTime.split(':').map(Number);
+    const duration = parseInt(serviceDuration, 10);
+    
+    let endMinutes = minutes + duration;
+    let endHours = hours + Math.floor(endMinutes / 60);
+    endMinutes = endMinutes % 60;
+    
+    // Añadimos el cero delante si es necesario (ej: 09, 05...)
+    const pad = (num: number) => String(num).padStart(2, '0');
+    const endAt = `${selectedDate}T${pad(endHours)}:${pad(endMinutes)}:00Z`;
+  
+
 
     // 3. Dispatch data payload to the API
     try {
