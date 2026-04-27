@@ -1,46 +1,58 @@
-# Welcome to your Expo app 👋
-
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
-
-## Get started
-
-1. Install dependencies
-
+### 2. `README.md` del Frontend (React Native)
+# BarbApp Frontend (Mobile App)
+[Español](#español) | [English](#english)
+---
+<a name="español"></a>
+## Español
+### Descripción
+Cliente móvil nativo del ecosistema BarbApp, diseñado con React Native y Expo. Implementa una arquitectura de componentes y navegación por roles (Cliente, Barbero, Administrador) para interactuar fluidamente con la API REST central.
+### Requisitos previos
+* Node.js (versión LTS recomendada)
+* Expo CLI
+* Simulador iOS/Android o dispositivo físico con la app de "Expo Go" instalada.
+### Instalación y Despliegue
+1. **Clonar el repositorio:**
    ```bash
-   npm install
-   ```
+   git clone https://github.com/databaandsc/BarbApp-Frontend.git
+   cd BarbApp-Frontend
+Instalar dependencias: Navegar a la raíz del proyecto y ejecutar:
 
-2. Start the app
+bash
+npm install
+Configuración del Entorno: Asegurarse de que el servidor Backend de BarbApp se encuentra en ejecución. Configurar las variables de entorno necesarias (por ejemplo, en un archivo .env o en la configuración del cliente), incluyendo la URL de conexión a la API (EXPO_PUBLIC_API_URL) y las claves públicas de Supabase (EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY).
 
-   ```bash
-   npx expo start
-   ```
+Ejecutar la aplicación:
 
-In the output, you'll find options to open the app in a
+bash
+npx expo start
+Escanea el código QR generado en la terminal con la aplicación Expo Go en tu dispositivo móvil, o pulsa "i" / "a" en tu teclado para abrir los simuladores de iOS o Android.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+English
+Description
+The native mobile client of the BarbApp ecosystem, built with React Native and Expo. It implements a component-based architecture and role-based navigation (Client, Barber, Administrator) to interact seamlessly with the central REST API.
 
-## Get a fresh project
+Prerequisites
+Node.js (LTS version recommended)
+Expo CLI
+iOS/Android Simulator or a physical device with the "Expo Go" app installed.
+Installation and Deployment
+Clone the repository:
 
-When you're ready, run:
+bash
+git clone https://github.com/databaandsc/BarbApp-Frontend.git
+cd BarbApp-Frontend
+Install dependencies: Navigate to the project root and run:
 
-```bash
-npm run reset-project
-```
+bash
+npm install
+Environment Setup: Ensure that the BarbApp Backend server is running. Configure the necessary environment variables (e.g., in a .env file or in your client configuration), including the API connection URL (EXPO_PUBLIC_API_URL) and the Supabase public keys (EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY).
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Run the application:
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+bash
+npx expo start
+Scan the QR code generated in the terminal with the Expo Go app on your mobile device, or press "i" / "a" on your keyboard to open the iOS or Android simulators.
 
 ## Join the community
 
