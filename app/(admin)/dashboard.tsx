@@ -45,7 +45,7 @@ export default function AdminDashboard() {
       const data = await BookingService.getAllAppointments();
       setAppointments(data);
     } catch (error) {
-      // Se silencia este error en producción
+      // Error silenced in production / Error silenciado en producción
     } finally {
       setLoading(false);
       setRefreshing(false);

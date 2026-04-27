@@ -31,7 +31,7 @@ export const BookingService = {
       const response = await api.post('/api/appointments', request);
       return response.data;
     } catch (error) {
-      // Error silenciado
+      // Error silenced / Error silenciado
       throw error;
     }
   },
@@ -45,7 +45,7 @@ export const BookingService = {
       const response = await api.get('/api/appointments'); 
       return response.data;
     } catch (error) {
-      // Error silenciado
+      // Error silenced / Error silenciado
       throw error;
     }
   },
@@ -62,7 +62,7 @@ export const BookingService = {
       const response = await api.get('/api/appointments/admin/all');
       return response.data;
     } catch (error) {
-      // Error silenciado
+      // Error silenced / Error silenciado
       throw error;
     }
   },
@@ -83,7 +83,7 @@ export const BookingService = {
       );
       return response.data;
     } catch (error) {
-      // Error silenciado
+      // Error silenced / Error silenciado
       throw error;
     }
   },

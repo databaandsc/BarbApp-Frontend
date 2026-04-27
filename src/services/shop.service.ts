@@ -22,7 +22,7 @@ export const ShopService = {
       const response = await api.get('/api/public/services');
       return response.data;
     } catch (error) {
-      // Error silenciado
+      // Error silenced / Error silenciado
       throw error;
     }
   },
@@ -50,7 +50,7 @@ export const ShopService = {
       });
       return response.data; 
     } catch (error) {
-      // Error silenciado
+      // Error silenced / Error silenciado
       throw error;
     }
   }
