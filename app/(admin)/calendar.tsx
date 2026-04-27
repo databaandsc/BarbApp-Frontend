@@ -160,7 +160,7 @@ export default function AdminCalendar() {
             {/* Columna Derecha: Bloque del Evento/Cliente */}
             <View style={[styles.eventCard, item.status === 'PENDING' && { borderLeftColor: '#FFC107' }]}>
               
-              {/* Línea Superior: Nombre y Teléfono */}
+              {/* Top Line: Name and Phone / Línea Superior: Nombre y Teléfono */}
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
                 <Text style={styles.eventClientName}>{item.clientName}</Text>
                 <Text style={{ color: Colors.primary, fontWeight: 'bold', fontSize: 13 }}>
@@ -168,22 +168,22 @@ export default function AdminCalendar() {
                 </Text>
               </View>
 
-              {/* Línea de Servicios contratados (Corte, Barba, etc.) */}
+              {/* Line of contracted services (Haircut, Beard, etc.) / Línea de Servicios contratados (Corte, Barba, etc.) */}
               <Text style={{ fontSize: 15, fontWeight: '600', color: Colors.text, marginBottom: 4 }}>
                 {item.serviceNames?.join(', ') || 'Servicio General'}
               </Text>
 
-              {/* Dinero y Tiempo */}
+              {/* Money and Time / Dinero y Tiempo */}
               <Text style={styles.eventServiceDuration}>
                 {item.totalDurationMinutes} min · {item.totalPrice}€
               </Text>
               
-              {/* Notas del cliente (SOLO si ha escrito algo real y no el autogenerado) */}
+              {/* Client notes (ONLY if they wrote something real and not auto-generated) / Notas del cliente (SOLO si ha escrito algo real y no el autogenerado) */}
               {item.clientNotes && !item.clientNotes.includes('Reserva gestionada automáticamente') && (
                 <Text style={styles.eventNotes}>"{item.clientNotes}"</Text>
               )}
               
-              {/* Etiqueta de Estado del evento */}
+              {/* Event Status Badge / Etiqueta de Estado del evento */}
               <StatusBadge status={item.status} />
 
             </View>

@@ -20,7 +20,7 @@ export const BarberService = {
       const response = await api.get<PublicBarber[]>('/api/public/barbers');
       return response.data;
     } catch (error) {
-      // Error silenciado
+      // Error silenced / Error silenciado
       throw error; 
     }
   }
