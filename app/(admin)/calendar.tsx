@@ -160,9 +160,9 @@ export default function AdminCalendar() {
             {/* Columna Derecha: Bloque del Evento/Cliente */}
             <View style={[styles.eventCard, item.status === 'PENDING' && { borderLeftColor: '#FFC107' }]}>
               
-              {/* Top Line: Name and Phone / Línea Superior: Nombre y Teléfono */}
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-                <Text style={styles.eventClientName}>{item.clientName}</Text>
+              {/* Top Section: Name and Phone / Sección Superior: Nombre y Teléfono */}
+              <View style={{ flexDirection: 'column', marginBottom: 4 }}>
+                <Text style={[styles.eventClientName, { marginBottom: 2 }]}>{item.clientName}</Text>
                 <Text style={{ color: Colors.primary, fontWeight: 'bold', fontSize: 13 }}>
                   📞 {item.clientPhone}
                 </Text>
