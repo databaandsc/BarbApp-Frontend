@@ -65,19 +65,23 @@ export default function AdminCalendar() {
       // Ocultar citas canceladas de la vista de agenda diaria.
       if (app.status === 'CANCELLED') return false; 
       
-      const appDate = new Date(app.startAt);
-      return (
-        appDate.getFullYear() === selectedDate.getFullYear() &&
-        appDate.getMonth() === selectedDate.getMonth() &&
-        appDate.getDate() === selectedDate.getDate()
-      );
-    }).sort((a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime()); // Sort chronologically by hour / Ordenar cronológicamente por hora
+      // Extract YYYY-MM-DD directly from the string to bypass timezone issues
+      // Extraer YYYY-MM-DD directamente de la cadena para evitar problemas de zona horaria
+      const appDateStr = app.startAt.substring(0, 10);
+      
+      const yyyy = selectedDate.getFullYear();
+      const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const dd = String(selectedDate.getDate()).padStart(2, '0');
+      const selectedDateStr = `${yyyy}-${mm}-${dd}`;
+
+      return appDateStr === selectedDateStr;
+    }).sort((a, b) => a.startAt.localeCompare(b.startAt)); // Sort chronologically by string / Ordenar cronológicamente por cadena
   }, [appointments, selectedDate]);
 
-  // Helper function to format time as HH:MM ("10:30").
-  // Función auxiliar para formatear la hora como HH:MM ("10:30").
   const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // Extract HH:mm directly from the ISO string / Extraer HH:mm directamente
+    if (!dateString) return '';
+    return dateString.substring(11, 16);
   };
 
   // Helper function to get the short day name ("Mon", "Tue").
